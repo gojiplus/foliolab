@@ -15,9 +15,13 @@
     "lint:fix": "biome check --write .",
     "test": "vitest",
     "test:run": "vitest run",
-    "test:watch": "vitest --watch"
+    "test:watch": "vitest --watch",
+    "generate:org": "tsx scripts/generate-portfolio.ts",
+    "build:action": "esbuild action/index.ts --bundle --platform=node --target=node24 --format=cjs --legal-comments=eof --outfile=action-dist/index.cjs",
+    "check:action": "npm run build:action && git diff --exit-code -- action-dist/index.cjs"
   },
   "dependencies": {
+    "@actions/core": "^3.0.1",
     "@hookform/resolvers": "^3.9.1",
     "@jridgewell/trace-mapping": "^0.3.25",
     "@octokit/rest": "^21.1.1",

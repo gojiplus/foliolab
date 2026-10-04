@@ -67,7 +67,7 @@ const mockIntroduction = {
 describe("Portfolio Generation", () => {
   describe("HTML Generation", () => {
     it("should generate valid HTML with repositories", () => {
-      const html = generatePortfolioHtml("testuser", mockRepositories);
+      const html = generatePortfolioHtml({ login: "testuser", type: "User" }, mockRepositories);
 
       expect(html).toContain("<!DOCTYPE html>");
       expect(html).toContain('<html lang="en">');
@@ -77,7 +77,11 @@ describe("Portfolio Generation", () => {
     });
 
     it("should include user introduction when provided", () => {
-      const html = generatePortfolioHtml("testuser", mockRepositories, mockIntroduction);
+      const html = generatePortfolioHtml(
+        { login: "testuser", type: "User" },
+        mockRepositories,
+        mockIntroduction,
+      );
 
       expect(html).toContain(mockIntroduction.introduction);
       expect(html).toContain("React");
@@ -87,7 +91,12 @@ describe("Portfolio Generation", () => {
 
     it("should include avatar when provided", () => {
       const avatarUrl = "https://github.com/testuser.png";
-      const html = generatePortfolioHtml("testuser", mockRepositories, undefined, avatarUrl);
+      const html = generatePortfolioHtml(
+        { login: "testuser", type: "User" },
+        mockRepositories,
+        undefined,
+        avatarUrl,
+      );
 
       expect(html).toContain(`<img src="${avatarUrl}"`);
       expect(html).toContain('alt="Testuser"');
@@ -95,7 +104,7 @@ describe("Portfolio Generation", () => {
 
     it("should throw error when no repositories provided", () => {
       expect(() => {
-        generatePortfolioHtml("testuser", []);
+        generatePortfolioHtml({ login: "testuser", type: "User" }, []);
       }).toThrow("No repositories provided for portfolio generation");
     });
 
@@ -107,27 +116,30 @@ describe("Portfolio Generation", () => {
         },
       ];
 
-      const html = generatePortfolioHtml("testuser", repoWithoutMetadata as any);
+      const html = generatePortfolioHtml(
+        { login: "testuser", type: "User" },
+        repoWithoutMetadata as any,
+      );
       expect(html).toContain("Awesome Project");
       expect(html).not.toContain("★"); // No stars shown
     });
 
     it("should display repository stars when available", () => {
-      const html = generatePortfolioHtml("testuser", mockRepositories);
+      const html = generatePortfolioHtml({ login: "testuser", type: "User" }, mockRepositories);
 
       expect(html).toContain("★ 42"); // First repo stars
       expect(html).toContain("★ 15"); // Second repo stars
     });
 
     it("should include live demo links when available", () => {
-      const html = generatePortfolioHtml("testuser", mockRepositories);
+      const html = generatePortfolioHtml({ login: "testuser", type: "User" }, mockRepositories);
 
       expect(html).toContain("https://awesome-project.com");
       expect(html).toContain("View Live Demo");
     });
 
     it("should include GitHub links for all repositories", () => {
-      const html = generatePortfolioHtml("testuser", mockRepositories);
+      const html = generatePortfolioHtml({ login: "testuser", type: "User" }, mockRepositories);
 
       expect(html).toContain("https://github.com/testuser/awesome-project");
       expect(html).toContain("https://github.com/testuser/api-server");
@@ -135,7 +147,7 @@ describe("Portfolio Generation", () => {
     });
 
     it("should display repository topics as tags", () => {
-      const html = generatePortfolioHtml("testuser", mockRepositories);
+      const html = generatePortfolioHtml({ login: "testuser", type: "User" }, mockRepositories);
 
       expect(html).toContain("react");
       expect(html).toContain("typescript");
@@ -148,7 +160,7 @@ describe("Portfolio Generation", () => {
     it("should apply minimal theme correctly", () => {
       const minimalTheme = themes.find((t) => t.id === "minimal")!;
       const html = generatePortfolioHtml(
-        "testuser",
+        { login: "testuser", type: "User" },
         mockRepositories,
         undefined,
         undefined,
@@ -163,7 +175,7 @@ describe("Portfolio Generation", () => {
     it("should apply modern theme correctly", () => {
       const modernTheme = themes.find((t) => t.id === "modern")!;
       const html = generatePortfolioHtml(
-        "testuser",
+        { login: "testuser", type: "User" },
         mockRepositories,
         mockIntroduction,
         undefined,
@@ -178,7 +190,7 @@ describe("Portfolio Generation", () => {
     it("should apply elegant theme correctly", () => {
       const elegantTheme = themes.find((t) => t.id === "elegant")!;
       const html = generatePortfolioHtml(
-        "testuser",
+        { login: "testuser", type: "User" },
         mockRepositories,
         undefined,
         undefined,
@@ -191,7 +203,7 @@ describe("Portfolio Generation", () => {
     });
 
     it("should default to modern theme when no theme provided", () => {
-      const html = generatePortfolioHtml("testuser", mockRepositories);
+      const html = generatePortfolioHtml({ login: "testuser", type: "User" }, mockRepositories);
       const modernTheme = themes[1]; // Modern theme is at index 1
 
       expect(html).toContain(modernTheme.preview.background);
@@ -208,7 +220,7 @@ describe("Portfolio Generation", () => {
         },
       ];
 
-      const html = generatePortfolioHtml("testuser", repoWithHtml);
+      const html = generatePortfolioHtml({ login: "testuser", type: "User" }, repoWithHtml);
 
       // The HTML should escape malicious content to prevent XSS vulnerabilities
       // The summary is used in the template, not the description
@@ -225,7 +237,10 @@ describe("Portfolio Generation", () => {
         },
       ];
 
-      const html = generatePortfolioHtml("testuser", repoWithoutDisplayName as any);
+      const html = generatePortfolioHtml(
+        { login: "testuser", type: "User" },
+        repoWithoutDisplayName as any,
+      );
       expect(html).toContain(mockRepositories[0].name); // Falls back to name
     });
 
@@ -238,7 +253,10 @@ describe("Portfolio Generation", () => {
         },
       ];
 
-      const html = generatePortfolioHtml("testuser", repoWithoutDescription as any);
+      const html = generatePortfolioHtml(
+        { login: "testuser", type: "User" },
+        repoWithoutDescription as any,
+      );
       expect(html).toContain(mockRepositories[0].name);
       // Should not crash, even with missing content
     });

@@ -1,0 +1,8 @@
+{
+  "organization": "your-organization",
+  "theme": "modern",
+  "includeRepos": [],
+  "excludeRepos": [],
+  "includeForks": false,
+  "includeArchived": false
+}

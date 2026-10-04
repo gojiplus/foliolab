@@ -7,7 +7,15 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": ["**", "!dist", "!package-lock.json", "!client/src/components/ui", "!**/*.css"]
+    "includes": [
+      "**",
+      "!dist",
+      "!package-lock.json",
+      "!client/src/components/ui",
+      "!**/*.css",
+      "!action-dist",
+      "!_site"
+    ]
   },
   "formatter": {
     "enabled": true,

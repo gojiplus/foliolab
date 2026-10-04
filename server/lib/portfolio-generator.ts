@@ -24,8 +24,14 @@ export function sanitizeUrl(url: string | null | undefined): string {
   return escapeHtml(trimmed);
 }
 
+export interface PortfolioIdentity {
+  login: string;
+  type: "User" | "Organization";
+  displayName?: string | null;
+}
+
 export function generatePortfolioHtml(
-  username: string,
+  identity: PortfolioIdentity,
   repositories: Repository[],
   introduction?: {
     introduction: string;
@@ -55,8 +61,11 @@ export function generatePortfolioHtml(
     throw new Error("No repositories provided for portfolio generation");
   }
 
-  const capitalizedUsername = capitalizeFirstLetter(username);
-  const portfolioTitle = customTitle || `${capitalizedUsername}'s Portfolio`;
+  const displayName =
+    identity.displayName ||
+    (identity.type === "Organization" ? identity.login : capitalizeFirstLetter(identity.login));
+  const portfolioTitle =
+    customTitle || (identity.type === "Organization" ? displayName : `${displayName}'s Portfolio`);
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -108,7 +117,7 @@ export function generatePortfolioHtml(
                       avatarUrl
                         ? `
                     <div class="mb-6">
-                        <img src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(capitalizeFirstLetter(username))}" class="w-32 h-32 rounded-full mx-auto border-4 border-gray-200 shadow-lg">
+                        <img src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(displayName)}" class="w-32 h-32 rounded-full mx-auto border-4 border-gray-200 shadow-lg">
                     </div>
                     `
                         : ""
@@ -128,9 +137,13 @@ export function generatePortfolioHtml(
                               )
                               .join("")}
                         </div>
-                        <p class="${theme.preview.text} text-sm mb-8">
+                        ${
+                          introduction.interests.length
+                            ? `<p class="${theme.preview.text} text-sm mb-8">
                             <span class="font-medium">Interests:</span> ${introduction.interests.map((interest) => escapeHtml(interest)).join(", ")}
-                        </p>
+                        </p>`
+                            : ""
+                        }
                     </div>
                     `
                         : ""

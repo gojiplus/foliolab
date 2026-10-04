@@ -193,9 +193,15 @@ async function getUserRepositories(
   }
 }
 
-async function getOrganizationRepositories(
+export async function getOrganizationRepositories(
   octokit: Octokit,
   org: { login: string; avatarUrl: string | null },
+  filters?: {
+    includeForks: boolean;
+    includeArchived: boolean;
+    includeRepos: string[];
+    excludeRepos: string[];
+  },
 ): Promise<Repository[]> {
   try {
     const allRepos = await paginateGithubAPI(async (page) => {
@@ -211,18 +217,28 @@ async function getOrganizationRepositories(
 
     // Apply filtering - make it less aggressive
     const filteredRepos = allRepos.filter((repo) => {
-      const lowerName = repo.name.toLowerCase();
+      if (repo.private || repo.owner.login.toLowerCase() !== org.login.toLowerCase()) return false;
+      if (filters) {
+        const name = repo.name.toLowerCase();
+        return (
+          (filters.includeForks || !repo.fork) &&
+          (filters.includeArchived || !repo.archived) &&
+          (!filters.includeRepos.length || filters.includeRepos.includes(name)) &&
+          !filters.excludeRepos.includes(name)
+        );
+      }
       return (
-        !repo.archived && // Keep forks but remove archived repos
-        !lowerName.includes("-folio") &&
+        !repo.archived &&
+        !repo.name.toLowerCase().includes("-folio") &&
         repo.name !== "foliolab-vercel"
-        // Removed github.io filter as it might be legitimate portfolio sites
       );
     });
 
-    console.log(
-      `Fetched ${allRepos.length} repositories for org ${org.login}, ${filteredRepos.length} after filtering`,
-    );
+    if (!filters) {
+      console.log(
+        `Fetched ${allRepos.length} repositories for org ${org.login}, ${filteredRepos.length} after filtering`,
+      );
+    }
 
     return filteredRepos.map((repo) => {
       // Extract the actual owner from the repository URL
@@ -253,6 +269,7 @@ async function getOrganizationRepositories(
       };
     });
   } catch (error) {
+    if (filters) throw error;
     console.error(`Failed to fetch repositories for org ${org.login}:`, error);
     // Don't return empty array - let the caller handle the error
     throw new Error(

@@ -16,7 +16,7 @@ interface UserIntroduction {
  * LLM Configuration Constants
  * Centralized configuration for AI model parameters
  */
-const LLM_CONFIG = {
+export const LLM_CONFIG = {
   TEMPERATURE: 0.7, // Balance between creativity and consistency
   MAX_TOKENS: {
     REPO_SUMMARY: 800, // ~600 words for detailed project description
@@ -99,62 +99,70 @@ function getOpenAIClient(apiKey: string): OpenAI {
   return openaiClient;
 }
 
-async function generateWithOpenAI(
+export async function generateWithOpenAI(
   prompt: string,
   userContent: string,
   apiKey: string,
+  options?: { model: string; baseURL: string },
 ): Promise<RepoSummary> {
+  const openai = options
+    ? new OpenAI({
+        apiKey,
+        baseURL: options.baseURL,
+        timeout: LLM_CONFIG.TIMEOUT,
+        maxRetries: LLM_CONFIG.MAX_RETRIES,
+      })
+    : getOpenAIClient(apiKey);
+
+  const response = await openai.chat.completions.create({
+    model: options?.model || LLM_CONFIG.DEFAULT_MODEL,
+    messages: [
+      {
+        role: "system",
+        content: prompt,
+      },
+      {
+        role: "user",
+        content: userContent,
+      },
+    ],
+    response_format: { type: "json_object" },
+    temperature: LLM_CONFIG.TEMPERATURE,
+    max_tokens: LLM_CONFIG.MAX_TOKENS.REPO_SUMMARY,
+  });
+
+  // Check if response structure is valid
+  if (!response?.choices || !Array.isArray(response.choices) || response.choices.length === 0) {
+    throw new Error("Invalid response structure from LLM API");
+  }
+
+  const choice = response.choices[0];
+  if (!choice?.message) {
+    throw new Error("Invalid choice structure in LLM response");
+  }
+
+  if (
+    choice.finish_reason === "length" ||
+    choice.finish_reason === "content_filter" ||
+    choice.message.refusal
+  ) {
+    throw new Error("Summary response was incomplete or refused");
+  }
+  const content = choice.message.content;
+  if (!content) {
+    throw new Error("No content in LLM response message");
+  }
+
   try {
-    const openai = getOpenAIClient(apiKey);
-
-    const response = await openai.chat.completions.create({
-      model: LLM_CONFIG.DEFAULT_MODEL,
-      messages: [
-        {
-          role: "system",
-          content: prompt,
-        },
-        {
-          role: "user",
-          content: userContent,
-        },
-      ],
-      response_format: { type: "json_object" },
-      temperature: LLM_CONFIG.TEMPERATURE,
-      max_tokens: LLM_CONFIG.MAX_TOKENS.REPO_SUMMARY,
-    });
-
-    // Check if response structure is valid
-    if (!response?.choices || !Array.isArray(response.choices) || response.choices.length === 0) {
-      console.error("Invalid response structure:", response);
-      throw new Error("Invalid response structure from LLM API");
+    const parsed = JSON.parse(content) as RepoSummary;
+    if (typeof parsed.summary !== "string" || !parsed.summary.trim()) {
+      throw new Error("Summary response must contain nonempty summary text");
     }
-
-    const choice = response.choices[0];
-    if (!choice?.message) {
-      console.error("Invalid choice structure:", choice);
-      throw new Error("Invalid choice structure in LLM response");
-    }
-
-    const content = choice.message.content;
-    if (!content) {
-      console.error("No content in message:", choice.message);
-      throw new Error("No content in LLM response message");
-    }
-
-    try {
-      const parsed = JSON.parse(content) as RepoSummary;
-      return parsed;
-    } catch (parseError) {
-      console.error("Failed to parse JSON response:", parseError);
-      console.error("Raw content:", content);
-      throw new Error(
-        `Failed to parse JSON response: ${parseError instanceof Error ? parseError.message : String(parseError)}`,
-      );
-    }
-  } catch (error) {
-    console.error("Error in generateWithOpenAI:", error);
-    throw error;
+    return { summary: parsed.summary.trim() };
+  } catch (parseError) {
+    throw new Error(
+      `Failed to parse JSON response: ${parseError instanceof Error ? parseError.message : String(parseError)}`,
+    );
   }
 }
 
@@ -362,8 +370,6 @@ ${USER_INTRO_FORMAT}`;
       const parsed = JSON.parse(content) as UserIntroduction;
       return parsed;
     } catch (parseError) {
-      console.error("Failed to parse JSON response:", parseError);
-      console.error("Raw content:", content);
       throw new Error(
         `Failed to parse JSON response: ${parseError instanceof Error ? parseError.message : String(parseError)}`,
       );
