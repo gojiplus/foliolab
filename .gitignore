@@ -51,3 +51,8 @@ vite.config.ts.*
 # Temporary files
 .tmp/
 temp/
+
+# Local organization site output
+_site/
+.foliolab-site-*/
+.foliolab-data-*/

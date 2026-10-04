@@ -1,0 +1,40 @@
+name: FolioLab organization site
+description: Build a static organization portfolio with reusable AI summaries
+author: Gaurav Sood
+branding:
+  icon: layout
+  color: blue
+inputs:
+  config:
+    description: Organization configuration file, relative to the workspace
+    default: foliolab.config.json
+  data-file:
+    description: Saved portfolio data file, relative to the workspace
+    default: foliolab-data.json
+  output-directory:
+    description: Dedicated generated site directory, relative to the workspace
+    default: _site
+  github-token:
+    description: Token for reading public GitHub repositories
+    default: ${{ github.token }}
+  openai-api-key:
+    description: AI provider key, needed for new or changed summaries
+  force:
+    description: Regenerate all selected summaries
+    default: 'false'
+outputs:
+  data-file:
+    description: Absolute path to saved portfolio data
+  output-directory:
+    description: Absolute path to generated site
+  data-changed:
+    description: Whether saved portfolio data changed
+  repository-count:
+    description: Number of included repositories
+  generated-count:
+    description: Number of summaries generated this run
+  reused-count:
+    description: Number of summaries reused this run
+runs:
+  using: node24
+  main: action-dist/index.cjs

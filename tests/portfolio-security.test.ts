@@ -26,7 +26,7 @@ test("generatePortfolioHtml sanitizes javascript: URLs (Vulnerability Fix)", () 
     },
   };
 
-  const html = generatePortfolioHtml("attacker", [maliciousRepo]);
+  const html = generatePortfolioHtml({ login: "attacker", type: "User" }, [maliciousRepo]);
 
   // Check if the malicious URL is neutralized
   expect(html).not.toContain('href="javascript:alert("XSS")"');

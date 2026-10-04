@@ -6,6 +6,10 @@ FolioLab is an AI-powered portfolio generation tool that transforms your GitHub 
 
 Create your portfolio using this link: https://foliolab.vercel.app/
 
+## Organization websites
+
+Use the [FolioLab GitHub Action](README-action.md) to build an organization website on GitHub Pages and refresh it on a schedule. The Action reuses saved summaries and runs without the hosted app. Start with the [configuration and deployment example](examples/organization-site).
+
 ## Demo
 [![Watch the video](https://i.ytimg.com/vi/xvnSaZuMXu8/hqdefault.jpg)](https://youtu.be/xvnSaZuMXu8)
 

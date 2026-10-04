@@ -165,8 +165,9 @@ export async function analyzeProjectStructure(
   accessToken: string,
   owner: string,
   repo: string,
+  options: { strict?: boolean; octokit?: Octokit } = {},
 ): Promise<ProjectStructure> {
-  const octokit = new Octokit({ auth: accessToken });
+  const octokit = options.octokit || new Octokit({ auth: accessToken });
 
   try {
     // Get repository contents
@@ -195,7 +196,7 @@ export async function analyzeProjectStructure(
     for (const item of contents) {
       if (item.type === "file") {
         structure.rootFiles.push(item.name);
-        await analyzeFile(octokit, owner, repo, item, structure);
+        await analyzeFile(octokit, owner, repo, item, structure, options.strict);
       } else if (item.type === "dir") {
         structure.directories.push(item.name);
       }
@@ -208,6 +209,7 @@ export async function analyzeProjectStructure(
 
     return structure;
   } catch (error) {
+    if (options.strict) throw error;
     console.warn(`Failed to analyze project structure for ${owner}/${repo}:`, error);
     return {
       rootFiles: [],
@@ -228,17 +230,19 @@ async function analyzeFile(
   repo: string,
   file: any,
   structure: ProjectStructure,
+  strict = false,
 ): Promise<void> {
   const fileName = file.name.toLowerCase();
 
   // Analyze package files
   if (isPackageFile(fileName)) {
     try {
-      const packageInfo = await analyzePackageFile(octokit, owner, repo, file);
+      const packageInfo = await analyzePackageFile(octokit, owner, repo, file, strict);
       if (packageInfo) {
         structure.packageFiles.push(packageInfo);
       }
     } catch (error) {
+      if (strict) throw error;
       console.warn(`Failed to analyze package file ${file.name}:`, error);
     }
   }
@@ -269,6 +273,7 @@ async function analyzePackageFile(
   owner: string,
   repo: string,
   file: any,
+  strict = false,
 ): Promise<PackageInfo | null> {
   try {
     const { data } = await octokit.repos.getContent({
@@ -293,6 +298,7 @@ async function analyzePackageFile(
 
     return null;
   } catch (error) {
+    if (strict) throw error;
     console.warn(`Failed to fetch package file content:`, error);
     return null;
   }
@@ -404,7 +410,7 @@ export function detectFrameworks(structure: ProjectStructure): FrameworkInfo[] {
     // Check for required files
     if (patterns.files) {
       for (const file of patterns.files) {
-        if (rootFilesSet.has(file)) {
+        if (rootFilesSet.has(file) && !isPackageFile(file.toLowerCase())) {
           confidence += 30;
           indicators.push(`Has ${file}`);
         }
@@ -414,9 +420,7 @@ export function detectFrameworks(structure: ProjectStructure): FrameworkInfo[] {
     // Check for dependencies
     if (patterns.dependencies) {
       for (const dep of patterns.dependencies) {
-        // Check if ANY installed dependency includes the target framework dependency
-        // We preserve the original substring matching logic
-        if (uniqueDependencies.some((d) => d.includes(dep))) {
+        if (uniqueDependencies.includes(dep)) {
           confidence += 40;
           indicators.push(`Uses ${dep}`);
         }
@@ -627,7 +631,7 @@ export function generateProjectSummary(structure: ProjectStructure): string {
     features.push("mobile application");
   }
   if (structure.directories.includes("docs") || structure.directories.includes("documentation")) {
-    features.push("comprehensive documentation");
+    features.push("documentation");
   }
   if (structure.directories.includes("tests") || structure.directories.includes("test")) {
     features.push("test suite");

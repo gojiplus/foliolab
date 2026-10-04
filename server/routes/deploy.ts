@@ -36,7 +36,7 @@ router.post("/api/deploy/github", async (req, res) => {
 
     const theme = themes.find((t) => t.id === themeId) || themes[1];
     const html = generatePortfolioHtml(
-      user.username,
+      { login: user.username, type: "User" },
       repositories,
       userIntroduction,
       user.avatarUrl,
@@ -102,7 +102,7 @@ router.post("/api/deploy/github-pages", async (req, res) => {
 
     const theme = themes.find((t) => t.id === themeId) || themes[1];
     const html = generatePortfolioHtml(
-      user.username,
+      { login: user.username, type: "User" },
       repositories,
       userIntroduction,
       user.avatarUrl,
@@ -207,7 +207,7 @@ router.post("/api/deploy/vercel", async (req, res) => {
 
     const theme = themes.find((t) => t.id === themeId) || themes[1];
     const html = generatePortfolioHtml(
-      username,
+      { login: username, type: "User" },
       repositories,
       introduction,
       userAvatar,
