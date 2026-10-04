@@ -89,7 +89,7 @@ export default function SourceSelectionPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 p-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -105,35 +105,35 @@ export default function SourceSelectionPage() {
         </div>
 
         {/* Progress Indicator */}
-        <div className="bg-white rounded-lg shadow-sm p-4 mb-8">
+        <div className="bg-white rounded-lg shadow-xs p-4 mb-8">
           <div
-            className="flex items-center justify-between"
+            className="grid grid-cols-2 gap-4 sm:flex sm:items-center sm:justify-between"
             role="list"
             aria-label="Progress steps"
           >
             <div className="flex items-center gap-3" role="listitem" aria-current="step">
-              <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold">
+              <div className="w-8 h-8 shrink-0 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold">
                 1
               </div>
               <span className="font-medium text-gray-900">Select Sources</span>
             </div>
-            <div className="flex-1 h-1 bg-gray-200 mx-4" aria-hidden="true"></div>
+            <div className="hidden sm:block flex-1 h-1 bg-gray-200 mx-4" aria-hidden="true"></div>
             <div className="flex items-center gap-3" role="listitem">
-              <div className="w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-semibold">
+              <div className="w-8 h-8 shrink-0 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-semibold">
                 2
               </div>
               <span className="text-gray-500">Import Data</span>
             </div>
-            <div className="flex-1 h-1 bg-gray-200 mx-4" aria-hidden="true"></div>
+            <div className="hidden sm:block flex-1 h-1 bg-gray-200 mx-4" aria-hidden="true"></div>
             <div className="flex items-center gap-3" role="listitem">
-              <div className="w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-semibold">
+              <div className="w-8 h-8 shrink-0 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-semibold">
                 3
               </div>
               <span className="text-gray-500">Select Items</span>
             </div>
-            <div className="flex-1 h-1 bg-gray-200 mx-4" aria-hidden="true"></div>
+            <div className="hidden sm:block flex-1 h-1 bg-gray-200 mx-4" aria-hidden="true"></div>
             <div className="flex items-center gap-3" role="listitem">
-              <div className="w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-semibold">
+              <div className="w-8 h-8 shrink-0 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-semibold">
                 4
               </div>
               <span className="text-gray-500">Preview</span>
@@ -154,8 +154,8 @@ export default function SourceSelectionPage() {
                 onClick={() => !isDisabled && toggleSource(source.type)}
                 disabled={isDisabled}
                 aria-pressed={isSelected}
-                className={`${source.color} border-2 rounded-lg p-6 text-left hover:shadow-lg transition-all relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 ${
-                  isSelected ? "ring-4 ring-blue-500 ring-opacity-50" : ""
+                className={`${source.color} border-2 rounded-lg p-6 text-left hover:shadow-lg transition-all relative focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 ${
+                  isSelected ? "ring-4 ring-blue-500/50" : ""
                 } ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
               >
                 {/* Selection Checkbox */}
@@ -210,7 +210,7 @@ export default function SourceSelectionPage() {
           <button
             onClick={handleContinue}
             disabled={selectedSources.length === 0}
-            className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-8 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-linear-to-r from-blue-600 to-indigo-600 text-white py-3 px-8 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Continue to Import →
           </button>

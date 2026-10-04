@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 
 export function Header() {
   return (
-    <header className="border-b bg-white/80 backdrop-blur-md shadow-sm">
+    <header className="border-b bg-white/80 backdrop-blur-md shadow-xs">
       <div
         className="container mx-auto px-6 flex items-center justify-between"
         style={{ height: "100px" }}
@@ -14,7 +14,7 @@ export function Header() {
             <img
               src="/logo.svg"
               alt="FolioLab Logo"
-              className="h-13 group-hover:scale-105 transition-all duration-200 drop-shadow-sm"
+              className="h-13 group-hover:scale-105 transition-all duration-200 drop-shadow-xs"
             />
           </div>
         </Link>

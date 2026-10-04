@@ -224,7 +224,7 @@ app.use((req, res, next) => {
   if (process.env.NODE_ENV === "production") {
     app.use(express.static("dist/public"));
     // Serve index.html for client-side routing
-    app.get("*", (_req, res) => {
+    app.get("/{*path}", (_req, res) => {
       res.sendFile("dist/public/index.html", { root: "." });
     });
   } else {
@@ -233,8 +233,9 @@ app.use((req, res, next) => {
     await setupVite(app, server);
   }
 
-  const port = Number(process.env.PORT) || 5000;
+  const port = Number(process.env.PORT ?? 5000);
   server.listen(port, "0.0.0.0", () => {
-    console.log(`serving on port ${port}`);
+    const address = server.address();
+    console.log(`serving on port ${typeof address === "object" ? address?.port : port}`);
   });
 })();

@@ -135,7 +135,7 @@ export default function SelectItemsPage() {
 
   if (totalCount === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 flex items-center justify-center">
+      <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 p-4 flex items-center justify-center">
         <div className="max-w-md bg-white rounded-lg shadow-lg p-8 text-center">
           <div className="text-6xl mb-4">📦</div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">No Items Imported</h2>
@@ -154,7 +154,7 @@ export default function SelectItemsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 p-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-6">
@@ -165,7 +165,7 @@ export default function SelectItemsPage() {
         </div>
 
         {/* Progress Indicator */}
-        <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
+        <div className="bg-white rounded-lg shadow-xs p-4 mb-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center font-semibold">
@@ -198,7 +198,7 @@ export default function SelectItemsPage() {
         </div>
 
         {/* Stats and Actions Bar */}
-        <div className="bg-white rounded-lg shadow-sm p-4 mb-6 flex items-center justify-between">
+        <div className="bg-white rounded-lg shadow-xs p-4 mb-6 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <span className="text-gray-700">
               <span className="font-semibold text-blue-600">{selectedCount}</span> of{" "}
@@ -222,7 +222,7 @@ export default function SelectItemsPage() {
         </div>
 
         {/* Filter Tabs */}
-        <div className="bg-white rounded-lg shadow-sm p-2 mb-6 flex gap-2 overflow-x-auto">
+        <div className="bg-white rounded-lg shadow-xs p-2 mb-6 flex gap-2 overflow-x-auto">
           <button
             onClick={() => setFilter("all")}
             className={`px-4 py-2 rounded-lg whitespace-nowrap ${
@@ -261,7 +261,7 @@ export default function SelectItemsPage() {
             const sourceInfo = sourceLabels[source as SourceType];
 
             return (
-              <div key={source} className="bg-white rounded-lg shadow-sm p-6">
+              <div key={source} className="bg-white rounded-lg shadow-xs p-6">
                 <div className="flex items-center gap-3 mb-4">
                   <span className="text-2xl">{sourceInfo.icon}</span>
                   <h2 className="text-xl font-semibold text-gray-900">{sourceInfo.label}</h2>
@@ -291,7 +291,7 @@ export default function SelectItemsPage() {
                             handleToggleSelection(itemId);
                           }
                         }}
-                        className={`p-4 border-2 rounded-lg cursor-pointer transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                        className={`p-4 border-2 rounded-lg cursor-pointer transition-all focus:outline-hidden focus:ring-2 focus:ring-blue-500 ${
                           item.selected
                             ? "border-blue-500 bg-blue-50"
                             : "border-gray-200 hover:border-gray-300 bg-white"
@@ -368,7 +368,7 @@ export default function SelectItemsPage() {
           </button>
           <button
             onClick={handleContinue}
-            className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-8 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg"
+            className="bg-linear-to-r from-blue-600 to-indigo-600 text-white py-3 px-8 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg"
           >
             Continue to Preview →
           </button>

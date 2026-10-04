@@ -424,7 +424,7 @@ export default function PortfolioPreview() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary/5 to-primary/10">
+      <div className="min-h-screen bg-linear-to-br from-primary/5 to-primary/10">
         <div className="container mx-auto px-4 py-20">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-2xl font-bold mb-4">Loading Portfolio...</h1>
@@ -438,7 +438,7 @@ export default function PortfolioPreview() {
 
   if (isLoading || isGenerating) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary/5 to-primary/10">
+      <div className="min-h-screen bg-linear-to-br from-primary/5 to-primary/10">
         <div className="container mx-auto px-4 py-20">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-16">
@@ -649,7 +649,7 @@ export default function PortfolioPreview() {
                             key={topic}
                             className={
                               isModern
-                                ? "px-2 py-1 rounded-full text-sm bg-gradient-to-r from-indigo-500 to-purple-500 text-white"
+                                ? "px-2 py-1 rounded-full text-sm bg-linear-to-r from-indigo-500 to-purple-500 text-white"
                                 : "px-2 py-1 rounded-full text-sm bg-slate-800 text-white" // Explicit styling for Minimal theme
                             }
                           >
@@ -669,7 +669,7 @@ export default function PortfolioPreview() {
                             key={tag}
                             className={
                               isModern
-                                ? "px-2 py-1 rounded-full text-sm bg-gradient-to-r from-indigo-500 to-purple-500 text-white"
+                                ? "px-2 py-1 rounded-full text-sm bg-linear-to-r from-indigo-500 to-purple-500 text-white"
                                 : "px-2 py-1 rounded-full text-sm bg-slate-800 text-white"
                             }
                           >
@@ -740,7 +740,7 @@ export default function PortfolioPreview() {
 
             {/* Image URL Editor */}
             {editingImage && (
-              <div className="mb-6 p-4 border rounded-lg bg-white shadow-sm max-w-md mx-auto">
+              <div className="mb-6 p-4 border rounded-lg bg-white shadow-xs max-w-md mx-auto">
                 <h3 className="text-lg font-semibold mb-2">Edit Profile Image</h3>
                 <p className="text-sm text-gray-600 mb-4">
                   Enter a custom image URL or leave empty to use your GitHub avatar
@@ -913,7 +913,7 @@ export default function PortfolioPreview() {
                         key={index}
                         className={
                           isModern
-                            ? "px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r from-indigo-500 to-purple-500 text-white"
+                            ? "px-3 py-1 rounded-full text-sm font-medium bg-linear-to-r from-indigo-500 to-purple-500 text-white"
                             : isElegant
                               ? "px-3 py-1 rounded-full text-sm font-medium bg-stone-900 text-stone-50" // Special styling for Elegant
                               : "px-3 py-1 rounded-full text-sm font-medium bg-slate-800 text-white" // Default for Minimal
