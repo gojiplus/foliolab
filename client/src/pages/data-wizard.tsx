@@ -321,10 +321,10 @@ export default function DataWizardPage() {
   const totalSourceSteps = wizardState.selectedSources.length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 p-4">
       <div className="max-w-3xl mx-auto">
         {/* Progress Indicator */}
-        <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
+        <div className="bg-white rounded-lg shadow-xs p-4 mb-6">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-gray-600">
               Step {currentStepIndex + 1} of {totalSourceSteps + 2}

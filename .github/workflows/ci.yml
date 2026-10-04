@@ -76,6 +76,9 @@ jobs:
       - name: Lint and format check
         run: npm run lint
 
+      - name: Audit dependencies
+        run: npm audit
+
   # Single aggregate context for the branch ruleset to require. Naming matrix
   # legs directly means the next matrix change orphans a required check and
   # blocks every PR with no visible failure.

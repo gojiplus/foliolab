@@ -30,7 +30,7 @@ export function ThemeSelector({ value, onValueChange }: ThemeSelectorProps) {
             <div className="flex items-center gap-4 w-full">
               <div
                 className={cn(
-                  "w-10 h-10 rounded-md overflow-hidden flex-shrink-0",
+                  "w-10 h-10 rounded-md overflow-hidden shrink-0",
                   getThemePreviewClass(selectedTheme.id),
                 )}
               >
@@ -59,7 +59,7 @@ export function ThemeSelector({ value, onValueChange }: ThemeSelectorProps) {
             <div className="flex items-center gap-4 w-full">
               <div
                 className={cn(
-                  "w-10 h-10 rounded-md overflow-hidden flex-shrink-0",
+                  "w-10 h-10 rounded-md overflow-hidden shrink-0",
                   getThemePreviewClass(theme.id),
                 )}
               >
@@ -76,7 +76,7 @@ export function ThemeSelector({ value, onValueChange }: ThemeSelectorProps) {
                 <p className="font-medium truncate text-base">{theme.name}</p>
                 <p className="text-sm text-muted-foreground line-clamp-2">{theme.description}</p>
               </div>
-              {value === theme.id && <Check className="h-5 w-5 text-primary flex-shrink-0 ml-2" />}
+              {value === theme.id && <Check className="h-5 w-5 text-primary shrink-0 ml-2" />}
             </div>
           </SelectItem>
         ))}

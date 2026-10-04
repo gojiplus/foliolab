@@ -286,7 +286,7 @@ export default function RepoSelect() {
                     setSearchQuery("");
                     setCurrentPage(1);
                   }}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-ring"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground p-1 rounded-full focus:outline-hidden focus:ring-2 focus:ring-ring"
                   aria-label="Clear search"
                 >
                   <X className="h-4 w-4" />

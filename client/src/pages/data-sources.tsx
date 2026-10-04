@@ -273,7 +273,7 @@ export default function DataSourcesPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 p-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -623,7 +623,7 @@ export default function DataSourcesPage() {
           )}
           <button
             onClick={() => setLocation("/preview")}
-            className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-8 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg"
+            className="bg-linear-to-r from-blue-600 to-indigo-600 text-white py-3 px-8 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg"
           >
             {hasGitHubToken ? "Continue to Portfolio →" : "Preview Portfolio →"}
           </button>
