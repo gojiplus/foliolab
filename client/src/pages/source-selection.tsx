@@ -112,28 +112,28 @@ export default function SourceSelectionPage() {
             aria-label="Progress steps"
           >
             <div className="flex items-center gap-3" role="listitem" aria-current="step">
-              <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold">
+              <div className="w-8 h-8 shrink-0 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold">
                 1
               </div>
               <span className="font-medium text-gray-900">Select Sources</span>
             </div>
-            <div className="flex-1 h-1 bg-gray-200 mx-4" aria-hidden="true"></div>
+            <div className="hidden sm:block flex-1 h-1 bg-gray-200 mx-4" aria-hidden="true"></div>
             <div className="flex items-center gap-3" role="listitem">
-              <div className="w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-semibold">
+              <div className="w-8 h-8 shrink-0 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-semibold">
                 2
               </div>
               <span className="text-gray-500">Import Data</span>
             </div>
-            <div className="flex-1 h-1 bg-gray-200 mx-4" aria-hidden="true"></div>
+            <div className="hidden sm:block flex-1 h-1 bg-gray-200 mx-4" aria-hidden="true"></div>
             <div className="flex items-center gap-3" role="listitem">
-              <div className="w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-semibold">
+              <div className="w-8 h-8 shrink-0 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-semibold">
                 3
               </div>
               <span className="text-gray-500">Select Items</span>
             </div>
-            <div className="flex-1 h-1 bg-gray-200 mx-4" aria-hidden="true"></div>
+            <div className="hidden sm:block flex-1 h-1 bg-gray-200 mx-4" aria-hidden="true"></div>
             <div className="flex items-center gap-3" role="listitem">
-              <div className="w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-semibold">
+              <div className="w-8 h-8 shrink-0 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-semibold">
                 4
               </div>
               <span className="text-gray-500">Preview</span>
