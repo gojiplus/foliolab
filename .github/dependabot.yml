@@ -5,18 +5,22 @@ updates:
     schedule:
       interval: "weekly"
       day: "monday"
-    # Supply-chain guard: only propose releases that are at least a week old.
-    # Security updates are not delayed by cooldown.
     cooldown:
       default-days: 7
-    # Majors are deliberately left ungrouped so they arrive as individual PRs
-    # and fail the auto-merge gate. Security updates are ungrouped too: a
-    # grouped PR reports its group name rather than a bump type, so grouping
-    # them would send every security fix to manual review, which is how this
-    # repo accumulated an eight-PR backlog in the first place.
+    ignore:
+      # Keep the type surface aligned with the minimum supported Node runtime.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
     groups:
+      # These updates need a regenerated, reviewed Action bundle.
+      action-runtime:
+        applies-to: version-updates
+        patterns: ["@actions/core", "@octokit/rest", "openai", "zod", "esbuild"]
+        update-types: ["minor", "patch"]
       npm-minor-and-patch:
         applies-to: version-updates
+        patterns: ["*"]
+        exclude-patterns: ["@actions/core", "@octokit/rest", "openai", "zod", "esbuild"]
         update-types:
           - "minor"
           - "patch"
