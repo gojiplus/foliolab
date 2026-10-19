@@ -20,6 +20,9 @@
     "build:action": "esbuild action/index.ts --bundle --platform=node --target=node24 --format=cjs --legal-comments=eof --outfile=action-dist/index.cjs",
     "check:action": "npm run build:action && git diff --exit-code -- action-dist/index.cjs"
   },
+  "overrides": {
+    "postcss-selector-parser": "^7.1.6"
+  },
   "dependencies": {
     "@actions/core": "^3.0.1",
     "@hookform/resolvers": "^5.9.1",
