@@ -1,5 +1,6 @@
-import { Database, FileQuestion, Github, Info, Mail, Shield } from "lucide-react";
+import { Database, FileQuestion, Info, Mail, Shield } from "lucide-react";
 import { useEffect } from "react";
+import { SiGithub } from "react-icons/si";
 import { Link } from "wouter";
 import {
   Accordion,
@@ -48,7 +49,7 @@ export default function Home() {
                     onClick={handleStartClick}
                   >
                     <Link href="/auth/github" className="flex items-center justify-center gap-2">
-                      <Github className="w-5 h-5" />
+                      <SiGithub className="w-5 h-5" />
                       Start with GitHub
                     </Link>
                   </Button>
@@ -183,7 +184,7 @@ export default function Home() {
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors duration-200"
               >
-                <Github className="h-4 w-4" />
+                <SiGithub className="h-4 w-4" />
                 GitHub
               </a>
               <a

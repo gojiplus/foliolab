@@ -1,4 +1,4 @@
-import { Github } from "lucide-react";
+import { SiGithub } from "react-icons/si";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 
@@ -25,7 +25,7 @@ export function Header() {
           asChild
         >
           <a href="https://github.com/matmulai/foliolab" target="_blank" rel="noopener noreferrer">
-            <Github className="h-4 w-4" />
+            <SiGithub className="h-4 w-4" />
             View on GitHub
           </a>
         </Button>
