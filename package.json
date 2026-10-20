@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@actions/core": "^3.0.1",
+    "@daypicker/react": "^10.0.2",
     "@hookform/resolvers": "^5.9.1",
     "@jridgewell/trace-mapping": "^0.3.25",
     "@octokit/rest": "^22.0.1",
@@ -72,7 +73,6 @@
     "lucide-react": "^1.55.0",
     "openai": "^7.32.0",
     "react": "^18.3.1",
-    "react-day-picker": "^8.10.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.90.0",
     "react-icons": "^5.7.0",
