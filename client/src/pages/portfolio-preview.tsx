@@ -7,13 +7,13 @@ import {
   Check,
   Edit2,
   ExternalLink,
-  Github,
   GripVertical,
   Plus,
   Trash2,
   X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { SiGithub } from "react-icons/si";
 import { useLocation } from "wouter";
 import { DeploymentActions } from "@/components/deployment-actions";
 import { ThemeSelector } from "@/components/theme-selector";
@@ -563,7 +563,7 @@ export default function PortfolioPreview() {
                     <Button variant="outline" size="icon" asChild aria-label="View item">
                       <a href={item.url} target="_blank" rel="noopener noreferrer">
                         {item.source === "github" ? (
-                          <Github className="h-4 w-4" />
+                          <SiGithub className="h-4 w-4" />
                         ) : (
                           <ExternalLink className="h-4 w-4" />
                         )}
@@ -1132,7 +1132,7 @@ export default function PortfolioPreview() {
                               <Button variant="outline" size="icon" asChild aria-label="View item">
                                 <a href={item.url} target="_blank" rel="noopener noreferrer">
                                   {item.source === "github" ? (
-                                    <Github className="h-4 w-4" />
+                                    <SiGithub className="h-4 w-4" />
                                   ) : (
                                     <ExternalLink className="h-4 w-4" />
                                   )}

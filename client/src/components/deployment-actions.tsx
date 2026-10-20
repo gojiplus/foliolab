@@ -1,7 +1,8 @@
 import type { Repository } from "@shared/schema";
 import type { Theme } from "@shared/themes";
-import { Download, Github, Globe, Loader2 } from "lucide-react";
+import { Download, Globe, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { SiGithub } from "react-icons/si";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
@@ -295,7 +296,7 @@ export function DeploymentActions({
         {isCreatingRepo ? (
           <Loader2 className="h-4 w-4 animate-spin" />
         ) : (
-          <Github className="h-4 w-4" />
+          <SiGithub className="h-4 w-4" />
         )}
         Deploy to Vercel
       </Button>
