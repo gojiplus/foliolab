@@ -77,15 +77,14 @@
     "react-hook-form": "^7.90.0",
     "react-icons": "^5.7.0",
     "react-resizable-panels": "^2.1.4",
-    "recharts": "^2.13.0",
+    "recharts": "^3.10.1",
     "rss-parser": "^3.13.0",
     "tailwind-merge": "^3.7.0",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^1.1.2",
     "wouter": "^3.13.0",
     "ws": "^8.22.0",
-    "zod": "^3.23.8",
-    "zod-validation-error": "^3.4.0"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.15",
@@ -99,12 +98,17 @@
     "@types/ws": "^8.18.2",
     "@vitejs/plugin-react": "^6.1.2",
     "esbuild": "^0.28.1",
+    "jsdom": "^27.4.0",
     "postcss": "^8.5.30",
     "tailwindcss": "^4.3.3",
     "tsx": "^4.23.15",
     "typescript": "5.6.3",
     "vite": "^8.3.4",
-    "vitest": "^4.1.11"
+    "vitest": "^4.1.11",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.8",
+    "@testing-library/jest-dom": "^6.0.0",
+    "@testing-library/dom": "^10.4.2"
   },
   "optionalDependencies": {
     "bufferutil": "^4.1.0"
