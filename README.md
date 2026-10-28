@@ -24,6 +24,12 @@ Use the [FolioLab GitHub Action](README-action.md) to build an organization webs
 - 100% free and open source, self-hosted or on Vercel
 - Automatically skips forked and archived repositories
 
+README cleaning uses a Markdown syntax tree to remove recognized badges and boilerplate
+sections before summarization. It preserves code examples, nested documentation, ordinary
+images, and reference links. Raw HTML stays intact, including HTML badges; it is never
+interpreted as Markdown or executed by the cleaner. Prompt length limits are applied by
+the summarization code.
+
 ## Tech Stack
 
 - **Frontend**: Vite + React + TypeScript
