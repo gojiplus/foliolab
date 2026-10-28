@@ -72,7 +72,7 @@
     "input-otp": "^1.5.0",
     "lucide-react": "^1.59.0",
     "mdast-util-to-string": "^4.0.0",
-    "openai": "^7.32.0",
+    "openai": "^7.39.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.90.0",
