@@ -1,262 +1,190 @@
-/**
- * Utility functions for cleaning README content before LLM processing
- */
+import type { Definition, Nodes, Root } from "mdast";
+import { toString as nodeText } from "mdast-util-to-string";
+import remarkGfm from "remark-gfm";
+import remarkParse from "remark-parse";
+import remarkStringify from "remark-stringify";
+import { unified } from "unified";
 
-// ⚡ Bolt Optimization: Extracted RegExps to module level to avoid redundant compilation overhead on every execution
-const badgePatterns = [
-  // Shield.io badges - [![text](shield-url)](link-url)
-  /\[!\[([^\]]*)\]\([^)]*shields\.io[^)]*\)\]\([^)]*\)/g,
+const markdown = unified()
+  .use(remarkParse)
+  .use(remarkGfm)
+  .use(remarkStringify, { bullet: "-", fences: true });
 
-  // PyPI badges
-  /\[!\[PyPI[^\]]*\]\([^)]*pypi\.org[^)]*\)\]\([^)]*\)/g,
+const boilerplateHeadings = new Set([
+  "license",
+  "licensing",
+  "code of conduct",
+  "contributor code of conduct",
+  "contributing guidelines",
+  "security",
+  "security policy",
+  "reporting security issues",
+  "changelog",
+  "change log",
+  "release notes",
+  "version history",
+  "support",
+  "getting help",
+  "help",
+  "community",
+  "acknowledgment",
+  "acknowledgments",
+  "acknowledgement",
+  "acknowledgements",
+  "credit",
+  "credits",
+  "thank",
+  "thanks",
+  "contributing",
+  "how to contribute",
+  "contribution guidelines",
+  "faq",
+  "frequently asked questions",
+  "troubleshooting",
+  "common issues",
+  "known issues",
+  "table of content",
+  "table of contents",
+  "content",
+  "contents",
+  "toc",
+]);
 
-  // GitHub workflow/action badges
-  /\[!\[([^\]]*)\]\([^)]*github\.com[^)]*workflows[^)]*\)\]\([^)]*\)/g,
-  /\[!\[([^\]]*)\]\([^)]*github\.com[^)]*actions[^)]*\)\]\([^)]*\)/g,
-
-  // License badges
-  /\[!\[License[^\]]*\]\([^)]*badge[^)]*license[^)]*\)\]\([^)]*\)/g,
-  /\[!\[([^\]]*license[^\]]*)\]\([^)]*\)\]\([^)]*\)/gi,
-
-  // Version/Release badges
-  /\[!\[([^\]]*version[^\]]*)\]\([^)]*\)\]\([^)]*\)/gi,
-  /\[!\[([^\]]*release[^\]]*)\]\([^)]*\)\]\([^)]*\)/gi,
-  /\[!\[Changelog[^\]]*\]\([^)]*\)\]\([^)]*\)/g,
-
-  // Test/CI badges
-  /\[!\[([^\]]*test[^\]]*)\]\([^)]*\)\]\([^)]*\)/gi,
-  /\[!\[([^\]]*build[^\]]*)\]\([^)]*\)\]\([^)]*\)/gi,
-  /\[!\[([^\]]*ci[^\]]*)\]\([^)]*\)\]\([^)]*\)/gi,
-
-  // Coverage badges
-  /\[!\[([^\]]*coverage[^\]]*)\]\([^)]*\)\]\([^)]*\)/gi,
-  /\[!\[([^\]]*codecov[^\]]*)\]\([^)]*\)\]\([^)]*\)/gi,
-
-  // Documentation badges
-  /\[!\[([^\]]*docs[^\]]*)\]\([^)]*\)\]\([^)]*\)/gi,
-  /\[!\[([^\]]*documentation[^\]]*)\]\([^)]*\)\]\([^)]*\)/gi,
-
-  // Download/Install badges
-  /\[!\[([^\]]*download[^\]]*)\]\([^)]*\)\]\([^)]*\)/gi,
-  /\[!\[([^\]]*install[^\]]*)\]\([^)]*\)\]\([^)]*\)/gi,
-
-  // Generic img.shields.io badges
-  /\[!\[([^\]]*)\]\([^)]*img\.shields\.io[^)]*\)\]\([^)]*\)/g,
-
-  // Standalone shield images without links
-  /!\[([^\]]*)\]\([^)]*shields\.io[^)]*\)/g,
-  /!\[([^\]]*)\]\([^)]*img\.shields\.io[^)]*\)/g,
-
-  // Common badge hosting services
-  /\[!\[([^\]]*)\]\([^)]*badge\.fury\.io[^)]*\)\]\([^)]*\)/g,
-  /\[!\[([^\]]*)\]\([^)]*badgen\.net[^)]*\)\]\([^)]*\)/g,
-  /\[!\[([^\]]*)\]\([^)]*flat\.badgen\.net[^)]*\)\]\([^)]*\)/g,
+const badgeHosts = [
+  "shields.io",
+  "badgen.net",
+  "badge.fury.io",
+  "travis-ci.org",
+  "travis-ci.com",
+  "circleci.com",
+  "codecov.io",
+  "coveralls.io",
 ];
 
-// ⚡ Bolt Optimization: Combine badge patterns into a single RegExp to avoid looping over multiple patterns.
-// This allows the RegExp engine to perform a single O(N) pass over the text instead of M * O(N) passes.
-const combinedBadgePattern = new RegExp(badgePatterns.map((p) => p.source).join("|"), "gi");
+function isBadge(url: string): boolean {
+  let parsed: URL;
+  try {
+    parsed = new URL(url, "https://readme.invalid");
+  } catch {
+    return false;
+  }
+  const host = parsed.hostname;
+  if (badgeHosts.some((badgeHost) => host === badgeHost || host.endsWith(`.${badgeHost}`))) {
+    return true;
+  }
+  if (host === "github.com") {
+    return /\/(?:actions\/workflows|workflows)\/.*\/badge\.svg$/.test(parsed.pathname);
+  }
+  return host === "readthedocs.org" && /\/badge\/?$/.test(parsed.pathname);
+}
 
-const sectionsToRemove = [
-  // License sections
-  /^#+\s*(License|Licensing)\s*\n[\s\S]*?(?=\n#+|\n\n---|\n\n===|$)/gim,
+function collectDefinitions(node: Nodes, definitions: Map<string, Definition>): void {
+  if (node.type === "definition" && !definitions.has(node.identifier)) {
+    definitions.set(node.identifier, node);
+  }
+  if ("children" in node) {
+    for (const child of node.children) collectDefinitions(child, definitions);
+  }
+}
 
-  // Code of Conduct sections
-  /^#+\s*(Code of Conduct|Contributor Code of Conduct|Contributing Guidelines)\s*\n[\s\S]*?(?=\n#+|\n\n---|\n\n===|$)/gim,
+function cleanNode(node: Nodes, definitions: Map<string, Definition>): Nodes | undefined {
+  if (node.type === "definition") return undefined;
+  if (node.type === "image") return isBadge(node.url) ? undefined : node;
+  if (node.type === "imageReference") {
+    const definition = definitions.get(node.identifier);
+    if (!definition) return node;
+    return isBadge(definition.url)
+      ? undefined
+      : { type: "image", url: definition.url, title: definition.title, alt: node.alt };
+  }
+  if ("children" in node) {
+    const hadChildren = node.children.length > 0;
+    node.children = node.children
+      .map((child) => cleanNode(child, definitions))
+      .filter((child) => child !== undefined) as typeof node.children;
+    // Table cells and headings retain their structural meaning even when empty.
+    if (
+      hadChildren &&
+      [
+        "paragraph",
+        "link",
+        "linkReference",
+        "emphasis",
+        "strong",
+        "delete",
+        "blockquote",
+        "list",
+        "listItem",
+      ].includes(node.type) &&
+      node.children.every((child) => child.type === "text" && !child.value.trim())
+    ) {
+      return undefined;
+    }
+  }
+  if (node.type === "linkReference") {
+    const definition = definitions.get(node.identifier);
+    if (definition) {
+      return {
+        type: "link",
+        url: definition.url,
+        title: definition.title,
+        children: node.children,
+      };
+    }
+  }
+  return node;
+}
 
-  // Security sections (often boilerplate)
-  /^#+\s*(Security|Security Policy|Reporting Security Issues)\s*\n[\s\S]*?(?=\n#+|\n\n---|\n\n===|$)/gim,
+function withoutBoilerplate(tree: Root): void {
+  const footnotes = new Map(
+    tree.children
+      .filter((node) => node.type === "footnoteDefinition")
+      .map((node) => [node.identifier, node]),
+  );
+  let removedDepth: number | undefined;
+  tree.children = tree.children.filter((node) => {
+    if (node.type === "footnoteDefinition") return false;
+    if (node.type === "heading") {
+      if (removedDepth !== undefined && node.depth <= removedDepth) removedDepth = undefined;
+      const title = nodeText(node).trim().replace(/\s+/g, " ").toLowerCase();
+      if (removedDepth === undefined && boilerplateHeadings.has(title)) {
+        removedDepth = node.depth;
+      }
+    }
+    return removedDepth === undefined;
+  });
+  const referenced = new Set<string>();
+  function findReferences(node: Nodes): void {
+    if (node.type === "footnoteReference") referenced.add(node.identifier);
+    if ("children" in node) node.children.forEach(findReferences);
+  }
+  findReferences(tree);
+  // Definitions are document-wide, even when written beneath a removed heading.
+  referenced.forEach((identifier) => {
+    const definition = footnotes.get(identifier);
+    if (definition) {
+      tree.children.push(definition);
+      findReferences(definition);
+    }
+  });
+}
 
-  // Changelog sections (version history not relevant for portfolio)
-  /^#+\s*(Changelog|Change Log|Release Notes|Version History)\s*\n[\s\S]*?(?=\n#+|\n\n---|\n\n===|$)/gim,
+function clean(readme: string, removeBoilerplate: boolean): string {
+  const tree = markdown.parse(readme);
+  const definitions = new Map<string, Definition>();
+  collectDefinitions(tree, definitions);
+  // Resolve references before removing sections: definitions can live anywhere in a README.
+  cleanNode(tree, definitions);
+  if (removeBoilerplate) withoutBoilerplate(tree);
+  return markdown.stringify(tree).trim();
+}
 
-  // Support/Help sections
-  /^#+\s*(Support|Getting Help|Help|Community)\s*\n[\s\S]*?(?=\n#+|\n\n---|\n\n===|$)/gim,
-
-  // Acknowledgments/Credits (unless very brief)
-  /^#+\s*(Acknowledgments?|Credits?|Thanks?)\s*\n[\s\S]*?(?=\n#+|\n\n---|\n\n===|$)/gim,
-
-  // Detailed contributing sections
-  /^#+\s*(Contributing|How to Contribute|Contribution Guidelines)\s*\n[\s\S]*?(?=\n#+|\n\n---|\n\n===|$)/gim,
-
-  // FAQ sections (often too detailed for portfolio)
-  /^#+\s*(FAQ|Frequently Asked Questions)\s*\n[\s\S]*?(?=\n#+|\n\n---|\n\n===|$)/gim,
-
-  // Detailed troubleshooting sections
-  /^#+\s*(Troubleshooting|Common Issues|Known Issues)\s*\n[\s\S]*?(?=\n#+|\n\n---|\n\n===|$)/gim,
-
-  // Table of contents (not needed for LLM)
-  /^#+\s*(Table of Contents?|Contents?|TOC)\s*\n[\s\S]*?(?=\n#+|\n\n---|\n\n===|$)/gim,
-];
-
-const prioritySections = [
-  /^#+\s*(Description|About|Overview|What is|Introduction|Summary)/i,
-  /^#+\s*(Features|Key Features|Highlights|What it does)/i,
-  /^#+\s*(Quick Start|Getting Started|Quickstart)/i,
-  /^#+\s*(Installation|Setup|Install)/i,
-  /^#+\s*(Usage|How to use|Examples?|Demo)/i,
-  /^#+\s*(API|Documentation|Docs)/i,
-  /^#+\s*(Architecture|Design|How it works)/i,
-  /^#+\s*(Requirements|Prerequisites|Dependencies)/i,
-  /^#+\s*(Configuration|Config|Settings)/i,
-];
-
-const noisePatterns = [
-  // Remove standalone horizontal rules
-  /^---+$/gm,
-  /^===+$/gm,
-
-  // Remove empty badge sections
-  /^\s*\[!\[.*?\]\(.*?\)\]\(.*?\)\s*$/gm,
-
-  // Remove excessive code block markers without content
-  /```\s*\n\s*```/g,
-
-  // Remove table of contents links
-  /^\s*[-*]\s*\[.*?\]\(#.*?\)\s*$/gm,
-];
-
-/**
- * Removes common badges and shields from README content
- * @param readme - Raw README content
- * @returns Cleaned README content with badges removed
- */
+/** Remove recognized Markdown badge images while preserving prose, code, and ordinary images. */
 export function removeBadges(readme: string): string {
-  if (!readme) return readme;
-
-  let cleanedReadme = readme;
-
-  // Apply all badge removal patterns
-  cleanedReadme = cleanedReadme.replace(combinedBadgePattern, "");
-
-  // Remove multiple consecutive newlines left by badge removal
-  cleanedReadme = cleanedReadme.replace(/\n{3,}/g, "\n\n");
-
-  // Remove leading/trailing whitespace
-  cleanedReadme = cleanedReadme.trim();
-
-  return cleanedReadme;
+  return readme ? clean(readme, false) : readme;
 }
 
-/**
- * Extracts the most relevant content from README for portfolio generation
- * Removes badges, boilerplate sections, and focuses on project essence
- * @param readme - README content
- * @returns Cleaned and focused README content
- */
+/** Clean structural noise; the summarization callers own their prompt length limits. */
 export function cleanReadmeContent(readme: string | null | undefined): string {
-  if (!readme) return "";
-
-  let cleaned = removeBadges(readme);
-  cleaned = removeBoilerplateSections(cleaned);
-  cleaned = extractRelevantSections(cleaned);
-  cleaned = cleanupWhitespace(cleaned);
-
-  return cleaned;
-}
-
-/**
- * Removes common boilerplate sections that don't add project context
- */
-function removeBoilerplateSections(content: string): string {
-  let cleaned = content;
-  sectionsToRemove.forEach((pattern) => {
-    cleaned = cleaned.replace(pattern, "");
-  });
-
-  return cleaned;
-}
-
-/**
- * Extracts and prioritizes the most relevant sections for project understanding
- */
-function extractRelevantSections(content: string): string {
-  // Split content into sections
-  const sections = content.split(/\n(?=#+\s)/);
-  const relevantSections: string[] = [];
-
-  // Always include the title/header section (first section)
-  if (sections[0]) {
-    relevantSections.push(sections[0]);
-  }
-
-  // Add sections that match priority patterns
-  sections.slice(1).forEach((section) => {
-    const sectionHeader = section.split("\n")[0];
-    const isPriority = prioritySections.some((pattern) => pattern.test(sectionHeader));
-
-    if (isPriority) {
-      // Limit section length to avoid overly detailed content
-      const limitedSection = limitSectionLength(section, 500);
-      relevantSections.push(limitedSection);
-    }
-  });
-
-  // If we don't have enough content, add other sections but with stricter limits
-  if (relevantSections.join("\n\n").length < 800) {
-    sections.slice(1).forEach((section) => {
-      const sectionHeader = section.split("\n")[0];
-      const isAlreadyIncluded = relevantSections.some((existing) =>
-        existing.includes(sectionHeader),
-      );
-
-      if (!isAlreadyIncluded) {
-        // Add with very strict length limit
-        const limitedSection = limitSectionLength(section, 200);
-        if (limitedSection.length > 50) {
-          // Only add if it has meaningful content
-          relevantSections.push(limitedSection);
-        }
-      }
-    });
-  }
-
-  return relevantSections.join("\n\n");
-}
-
-/**
- * Limits the length of a section while preserving structure
- */
-function limitSectionLength(section: string, maxLength: number): string {
-  if (section.length <= maxLength) return section;
-
-  const lines = section.split("\n");
-  const header = lines[0];
-  let content = "";
-  let currentLength = header.length;
-
-  for (let i = 1; i < lines.length; i++) {
-    const line = lines[i];
-    if (currentLength + line.length + 1 > maxLength) {
-      // Try to end at a natural break point
-      if (content.includes(".") || content.includes("!") || content.includes("?")) {
-        break;
-      }
-      // Otherwise, add this line if it's not too long
-      if (currentLength + line.length + 1 < maxLength + 100) {
-        content += `\n${line}`;
-      }
-      break;
-    }
-    content += `\n${line}`;
-    currentLength += line.length + 1;
-  }
-
-  return header + content;
-}
-
-/**
- * Final cleanup of whitespace and formatting
- */
-function cleanupWhitespace(content: string): string {
-  let cleaned = content;
-
-  noisePatterns.forEach((pattern) => {
-    cleaned = cleaned.replace(pattern, "");
-  });
-
-  // Final cleanup of excessive whitespace
-  cleaned = cleaned.replace(/\n{3,}/g, "\n\n").trim();
-
-  return cleaned;
+  return readme ? clean(readme, true) : "";
 }
