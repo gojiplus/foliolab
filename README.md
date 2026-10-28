@@ -32,6 +32,8 @@ the summarization code.
 
 ## Tech Stack
 
+Requires Node.js 22.12 or later on the 22.x line, or Node.js 24 or later.
+
 - **Frontend**: Vite + React + TypeScript
 - **Backend**: Express.js + TypeScript
 - **Styling**: Tailwind CSS + Shadcn UI

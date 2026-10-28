@@ -1,5 +1,4 @@
-# Use Node.js 20 as the base image
-FROM node:20-slim
+FROM node:24-slim
 
 # Set working directory
 WORKDIR /app
@@ -8,7 +7,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install
+RUN npm ci
 
 # Copy project files
 COPY . .
