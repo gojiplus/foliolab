@@ -24,6 +24,7 @@ foliolab/
 ## Key Files & Their Responsibilities
 
 ### 1. Schema Definitions
+
 **File:** `/home/user/foliolab/shared/schema.ts`
 
 Defines all data structures. Key lines:
@@ -40,45 +41,47 @@ source: z.literal(...)    // Line 25, 50, 75, 99, 114, 130, 145
 ```
 
 ### 2. Storage Layer
+
 **File:** `/home/user/foliolab/client/src/lib/storage.ts`
 
 All localStorage operations. Key functions:
 
-| Function | Line | Purpose |
-|----------|------|---------|
-| `toggleRepositorySelection()` | 131-145 | Toggle selected flag for GitHub repo |
-| `getPortfolioItems()` | 157-178 | Get all items (with migration logic) |
-| `addPortfolioItems()` | 186-190 | Add multiple items (used by data sources) |
-| `togglePortfolioItemSelection()` | 221-241 | Toggle selected for any portfolio item |
-| `getPortfolioItemsBySource()` | 243-245 | Filter items by source |
+| Function                         | Line    | Purpose                                   |
+| -------------------------------- | ------- | ----------------------------------------- |
+| `toggleRepositorySelection()`    | 131-145 | Toggle selected flag for GitHub repo      |
+| `getPortfolioItems()`            | 157-178 | Get all items (with migration logic)      |
+| `addPortfolioItems()`            | 186-190 | Add multiple items (used by data sources) |
+| `togglePortfolioItemSelection()` | 221-241 | Toggle selected for any portfolio item    |
+| `getPortfolioItemsBySource()`    | 243-245 | Filter items by source                    |
 
 **Storage Keys:**
 ```typescript
 // Line 3-10
 STORAGE_KEYS = {
-  REPOSITORIES: "foliolab_repositories",           // Legacy
-  PORTFOLIO_ITEMS: "foliolab_portfolio_items",     // New unified
+  REPOSITORIES: "foliolab_repositories", // Legacy
+  PORTFOLIO_ITEMS: "foliolab_portfolio_items", // New unified
   GITHUB_TOKEN: "foliolab_github_token",
   GITLAB_TOKEN: "foliolab_gitlab_token",
   BITBUCKET_CREDENTIALS: "foliolab_bitbucket_credentials",
-  DATA_SOURCES: "foliolab_data_sources"
-}
+  DATA_SOURCES: "foliolab_data_sources",
+};
 ```
 
 ### 3. GitHub Selection UI
+
 **File:** `/home/user/foliolab/client/src/pages/repo-select.tsx`
 
 Complete selection implementation:
 
-| Section | Lines | Description |
-|---------|-------|-------------|
-| Query setup | 38-45 | Loads repos from `/api/repositories` |
-| Toggle mutation | 47-80 | Updates storage + cache |
-| Filtered repos | 111-132 | Search & filter logic |
-| Pagination | 134-139 | 10 repos per page |
-| Two-column layout | 304-484 | Left: available, Right: selected |
-| Select All | 143-149 | Bulk selection |
-| Generate Portfolio | 153-224 | Analyze each repo + navigate |
+| Section            | Lines   | Description                          |
+| ------------------ | ------- | ------------------------------------ |
+| Query setup        | 38-45   | Loads repos from `/api/repositories` |
+| Toggle mutation    | 47-80   | Updates storage + cache              |
+| Filtered repos     | 111-132 | Search & filter logic                |
+| Pagination         | 134-139 | 10 repos per page                    |
+| Two-column layout  | 304-484 | Left: available, Right: selected     |
+| Select All         | 143-149 | Bulk selection                       |
+| Generate Portfolio | 153-224 | Analyze each repo + navigate         |
 
 **Key Components:**
 - Checkboxes with search filter (lines 267-278)
@@ -87,36 +90,38 @@ Complete selection implementation:
 - Selected repos panel (lines 408-484)
 
 ### 4. Data Sources Fetching
+
 **File:** `/home/user/foliolab/client/src/pages/data-sources.tsx`
 
 Fetch forms for all sources:
 
-| Source | Lines | Handler Function |
-|--------|-------|------------------|
-| RSS | 323-368 | `handleRSSSubmit()` (53-86) |
-| Medium | 370-406 | `handleMediumSubmit()` (88-120) |
-| GitLab | 409-457 | `handleGitLabSubmit()` (122-154) |
+| Source    | Lines   | Handler Function                    |
+| --------- | ------- | ----------------------------------- |
+| RSS       | 323-368 | `handleRSSSubmit()` (53-86)         |
+| Medium    | 370-406 | `handleMediumSubmit()` (88-120)     |
+| GitLab    | 409-457 | `handleGitLabSubmit()` (122-154)    |
 | Bitbucket | 460-508 | `handleBitbucketSubmit()` (156-188) |
-| Freeform | 511-609 | `handleFreeformSubmit()` (190-233) |
+| Freeform  | 511-609 | `handleFreeformSubmit()` (190-233)  |
 
 **Critical Issue Pattern (Same on all):**
 All handlers end with:
 ```typescript
-addPortfolioItems(items);  // Line 76, 111, 146, 180
+addPortfolioItems(items); // Line 76, 111, 146, 180
 // NO selection UI shown after this!
 ```
 
 ### 5. Portfolio Preview
+
 **File:** `/home/user/foliolab/client/src/pages/portfolio-preview.tsx`
 
 Display logic:
 
-| Section | Lines | Issue |
-|---------|-------|-------|
-| Query data | 72-75 | Only queries `/api/repositories` (GitHub only) |
-| Filter selected | 344-360 | Only filters repositories, not other items |
-| Render repos | 433-592 | Only renders Repository objects |
-| Elegant theme | 933-1093 | Still only renders repos |
+| Section         | Lines    | Issue                                          |
+| --------------- | -------- | ---------------------------------------------- |
+| Query data      | 72-75    | Only queries `/api/repositories` (GitHub only) |
+| Filter selected | 344-360  | Only filters repositories, not other items     |
+| Render repos    | 433-592  | Only renders Repository objects                |
+| Elegant theme   | 933-1093 | Still only renders repos                       |
 
 **The Gap:**
 ```typescript
@@ -124,21 +129,22 @@ Display logic:
 const { data, isLoading, error } = useQuery<{ repositories: Repository[] }>({
   queryKey: ["/api/repositories"],
   // ❌ Should also load portfolio items with other sources
-})
+});
 ```
 
 ### 6. Server API Routes
+
 **File:** `/home/user/foliolab/server/routes/sources.ts`
 
 API endpoints for fetching:
 
-| Endpoint | Lines | Purpose |
-|----------|-------|---------|
-| POST `/api/sources/rss` | 16-32 | Fetch RSS blog posts |
-| POST `/api/sources/medium` | 39-55 | Fetch Medium posts |
-| POST `/api/sources/gitlab` | 84-107 | Fetch GitLab projects |
-| POST `/api/sources/bitbucket` | 114-130 | Fetch Bitbucket repos |
-| POST `/api/sources/freeform` | 160-190 | Create free-form content |
+| Endpoint                      | Lines   | Purpose                  |
+| ----------------------------- | ------- | ------------------------ |
+| POST `/api/sources/rss`       | 16-32   | Fetch RSS blog posts     |
+| POST `/api/sources/medium`    | 39-55   | Fetch Medium posts       |
+| POST `/api/sources/gitlab`    | 84-107  | Fetch GitLab projects    |
+| POST `/api/sources/bitbucket` | 114-130 | Fetch Bitbucket repos    |
+| POST `/api/sources/freeform`  | 160-190 | Create free-form content |
 
 **Key Detail:** All return items with `selected: false` by default (from schema)
 
@@ -317,20 +323,20 @@ getPortfolioItemsBySource(source)
   {
     id: "rss-post-1",
     title: "Great Article",
-    selected: false,        // ← User can't see or toggle this
-    source: "blog_rss"
+    selected: false, // ← User can't see or toggle this
+    source: "blog_rss",
   },
-  
+
   // Medium posts with selected: false
   {
     id: "medium-123",
     title: "My Medium Post",
-    selected: false,        // ← User can't see or toggle this
-    source: "medium"
-  }
-  
+    selected: false, // ← User can't see or toggle this
+    source: "medium",
+  },
+
   // GitLab projects, Bitbucket repos, etc. - same issue
-]
+];
 ```
 
 ---
@@ -376,4 +382,3 @@ grep -r "POST.*sources" /home/user/foliolab/server/routes/sources.ts
 # Check schema discriminated union
 grep -A 10 "discriminatedUnion" /home/user/foliolab/shared/schema.ts
 ```
-

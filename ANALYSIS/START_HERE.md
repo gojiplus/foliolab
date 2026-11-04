@@ -69,14 +69,14 @@ The infrastructure for multi-source selection already exists in the codebase - a
 
 ## The Files You Need to Know
 
-| File | What It Does | Status |
-|------|--------------|--------|
-| `client/src/pages/repo-select.tsx` | GitHub selection UI | Works |
-| `client/src/pages/data-sources.tsx` | Fetch forms for all sources | Works |
-| `client/src/pages/portfolio-preview.tsx` | Display portfolio | Incomplete (GitHub only) |
-| `client/src/lib/storage.ts` | localStorage management | Ready for all sources |
-| `shared/schema.ts` | Type definitions | Supports all sources |
-| `server/routes/sources.ts` | API endpoints for fetching | Works for all sources |
+| File                                     | What It Does                | Status                   |
+| ---------------------------------------- | --------------------------- | ------------------------ |
+| `client/src/pages/repo-select.tsx`       | GitHub selection UI         | Works                    |
+| `client/src/pages/data-sources.tsx`      | Fetch forms for all sources | Works                    |
+| `client/src/pages/portfolio-preview.tsx` | Display portfolio           | Incomplete (GitHub only) |
+| `client/src/lib/storage.ts`              | localStorage management     | Ready for all sources    |
+| `shared/schema.ts`                       | Type definitions            | Supports all sources     |
+| `server/routes/sources.ts`               | API endpoints for fetching  | Works for all sources    |
 
 ---
 
@@ -90,26 +90,26 @@ localStorage.foliolab_portfolio_items = [
   {
     id: 1,
     name: "my-repo",
-    selected: true,      // ← User CAN change this (has UI)
-    source: "github"
+    selected: true, // ← User CAN change this (has UI)
+    source: "github",
   },
-  
+
   // Blog posts (from /data-sources import)
   {
     id: "post-1",
     title: "My Post",
-    selected: false,     // ← User CANNOT change this (no UI)
-    source: "blog_rss"
+    selected: false, // ← User CANNOT change this (no UI)
+    source: "blog_rss",
   },
-  
+
   // Medium posts (from /data-sources import)
   {
     id: "med-1",
     title: "Medium Article",
-    selected: false,     // ← User CANNOT change this (no UI)
-    source: "medium"
-  }
-]
+    selected: false, // ← User CANNOT change this (no UI)
+    source: "medium",
+  },
+];
 ```
 
 The `selected` flag exists for all types, but only GitHub has a UI to toggle it.
@@ -149,28 +149,31 @@ Layer 3: Display
 ## What Needs to Be Fixed
 
 ### Issue #1: Missing Selection UI
+
 Blog posts and other sources are fetched and stored but users can't see or select them.
 
 **Location:** `data-sources.tsx` line 76 (and similar for other sources)
 ```typescript
-addPortfolioItems(posts);  // ← Items stored immediately without showing UI
+addPortfolioItems(posts); // ← Items stored immediately without showing UI
 ```
 
 **Fix:** Create a `/portfolio-items` selection page showing all fetched items with checkboxes
 
 ### Issue #2: Portfolio Preview Only Shows GitHub
+
 The preview page is hardcoded to only query and display GitHub repositories.
 
 **Location:** `portfolio-preview.tsx` lines 72-75
 ```typescript
 const { data } = useQuery<{ repositories: Repository[] }>({
-  queryKey: ["/api/repositories"],  // ← Only GitHub!
-})
+  queryKey: ["/api/repositories"], // ← Only GitHub!
+});
 ```
 
 **Fix:** Query all portfolio items and render based on source type
 
 ### Issue #3: No Navigation Workflow
+
 After importing items, there's no link to view or select them.
 
 **Fix:** Create navigation between pages and guide user through the workflow
@@ -280,4 +283,3 @@ GitHub portfolio selection: ✓ Complete and working
 Multi-source portfolio support: ✗ 70% complete (backend ready, UI missing)
 
 Only 3 components need to be created/updated to make it fully work.
-

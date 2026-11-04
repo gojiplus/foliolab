@@ -11,6 +11,7 @@ Create your portfolio using this link: https://foliolab.vercel.app/
 Use the [FolioLab GitHub Action](README-action.md) to build an organization website on GitHub Pages and refresh it on a schedule. The Action reuses saved summaries and runs without the hosted app. Start with the [configuration and deployment example](examples/organization-site).
 
 ## Demo
+
 [![Watch the video](https://i.ytimg.com/vi/xvnSaZuMXu8/hqdefault.jpg)](https://youtu.be/xvnSaZuMXu8)
 
 
@@ -48,7 +49,7 @@ npm install
 ```
 
 3. Set up environment variables:
-Copy the example environment file and configure your values:
+   Copy the example environment file and configure your values:
 ```bash
 cp .env.example .env
 ```
@@ -78,7 +79,7 @@ To obtain GitHub OAuth credentials:
 3. Set the Homepage URL to `http://localhost:5000`
 4. Set the Authorization callback URL to `http://localhost:5000/auth/github`
 
-4. Start the development server:
+5. Start the development server:
 ```bash
 npm run dev
 ```
@@ -90,9 +91,11 @@ npm run dev
 FolioLab uses LLM to generate AI-powered descriptions for your repositories. You can customize the OpenAI configuration using the following environment variables:
 
 ### Required
+
 - `OPENAI_API_KEY`: Your OpenAI API key
 
 ### Optional
+
 - `OPENAI_API_BASE_URL`: Custom base URL for OpenAI API calls
   - Default: Uses OpenAI's default endpoint
   - Example: `https://your-proxy.com/` (for proxy servers or alternative endpoints)
@@ -103,6 +106,7 @@ FolioLab uses LLM to generate AI-powered descriptions for your repositories. You
   - Examples: `gpt-4`, `gpt-3.5-turbo`, `gpt-4-turbo`
 
 ### Example Configuration
+
 ```env
 OPENAI_API_KEY=sk-your-api-key-here
 OPENAI_API_BASE_URL=https://api.openai.com/v1
@@ -212,25 +216,30 @@ Tests are automatically run in CI/CD pipelines to ensure code quality and preven
 FolioLab follows security best practices to protect your data and API keys:
 
 ### Environment Variables
+
 - **Never commit `.env` files** - All sensitive configuration is stored in environment variables
 - **Use `.env.example`** - Reference file showing required environment variables without exposing actual values
 - **Secure API key storage** - All API keys (GitHub, OpenAI, Vercel) are stored as environment variables
 
 ### API Key Security
+
 - **Server-side only** - API keys are only used on the server side, never exposed to the client
 - **Environment variable validation** - The application validates that required API keys are present before starting
 - **No hardcoded credentials** - All authentication credentials are externalized to environment variables
 
 ### GitHub OAuth
+
 - **Secure OAuth flow** - Uses GitHub's official OAuth 2.0 flow for authentication
 - **Limited scope** - Only requests necessary permissions for repository access
 - **Token storage** - GitHub tokens are stored securely in browser localStorage (client-side only)
 
 ### Best Practices
+
 - **Input validation** - All user inputs are validated and sanitized
 - **Error handling** - Sensitive information is not exposed in error messages
 - **CORS configuration** - Proper CORS settings for production deployments
 - **Environment separation** - Clear separation between development and production configurations
 
 ### Reporting Security Issues
+
 If you discover a security vulnerability, please report it responsibly by emailing the maintainers directly rather than opening a public issue.

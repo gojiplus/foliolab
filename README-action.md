@@ -33,18 +33,18 @@ The Action builds files. The caller's workflow commits data and deploys through 
 
 Only `organization` is required. Personal accounts and multiple organizations are outside this Action's scope. Private repositories are never included, regardless of the token's permissions.
 
-| Field | Default and behavior |
-| --- | --- |
-| `organization` | Required GitHub organization login. |
-| `includeRepos` | Empty means all eligible repositories. Otherwise use exact repository names, without an owner prefix. Names are case-insensitive. |
-| `excludeRepos` | Repository names to omit. Exclusions win over inclusions. |
-| `includeForks` | `false`; set `true` to make forks eligible. |
-| `includeArchived` | `false`; set `true` to make archived repositories eligible. |
-| `theme` | `modern`; also supports `minimal` and `elegant`. |
-| `title` | Organization display name, falling back to its login. |
-| `introduction` | Organization description. Use an empty string to hide it. |
-| `model` | `OPENAI_API_MODEL`, then FolioLab's default (`gpt-4o`). |
-| `endpoint` | `OPENAI_API_BASE_URL`, then `https://api.openai.com/v1`. Optional base URL for a compatible Chat Completions provider. Credentials belong in secrets, not this URL. |
+| Field             | Default and behavior                                                                                                                                                |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `organization`    | Required GitHub organization login.                                                                                                                                 |
+| `includeRepos`    | Empty means all eligible repositories. Otherwise use exact repository names, without an owner prefix. Names are case-insensitive.                                   |
+| `excludeRepos`    | Repository names to omit. Exclusions win over inclusions.                                                                                                           |
+| `includeForks`    | `false`; set `true` to make forks eligible.                                                                                                                         |
+| `includeArchived` | `false`; set `true` to make archived repositories eligible.                                                                                                         |
+| `theme`           | `modern`; also supports `minimal` and `elegant`.                                                                                                                    |
+| `title`           | Organization display name, falling back to its login.                                                                                                               |
+| `introduction`    | Organization description. Use an empty string to hide it.                                                                                                           |
+| `model`           | `OPENAI_API_MODEL`, then FolioLab's default (`gpt-4o`).                                                                                                             |
+| `endpoint`        | `OPENAI_API_BASE_URL`, then `https://api.openai.com/v1`. Optional base URL for a compatible Chat Completions provider. Credentials belong in secrets, not this URL. |
 
 A configured model must support FolioLab's Chat Completions JSON mode and generation parameters. Configured model/endpoint values override environment variables. Unknown configuration fields, themes, malformed data, and an empty repository selection fail the run.
 
@@ -64,14 +64,14 @@ The output directory contains `index.html`, `.nojekyll`, and `portfolio.json`. T
 
 Use `gojiplus/foliolab@<full-commit-sha>` with these inputs:
 
-| Input | Default |
-| --- | --- |
-| `config` | `foliolab.config.json` |
-| `data-file` | `foliolab-data.json` |
-| `output-directory` | `_site` |
-| `github-token` | `${{ github.token }}` |
-| `openai-api-key` | Falls back to `OPENAI_API_KEY` in the environment. |
-| `force` | `false` |
+| Input              | Default                                            |
+| ------------------ | -------------------------------------------------- |
+| `config`           | `foliolab.config.json`                             |
+| `data-file`        | `foliolab-data.json`                               |
+| `output-directory` | `_site`                                            |
+| `github-token`     | `${{ github.token }}`                              |
+| `openai-api-key`   | Falls back to `OPENAI_API_KEY` in the environment. |
+| `force`            | `false`                                            |
 
 Paths are relative to the caller's working directory. Configuration and saved data must be separate files outside the generated site directory. If you change the data/output paths, also update the workflow's commit and Pages upload steps.
 
