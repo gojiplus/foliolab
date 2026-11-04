@@ -1,6 +1,7 @@
 # Portfolio Selection & Storage Flow Analysis
 
 ## Overview
+
 The application allows users to build a portfolio from multiple sources (GitHub, GitLab, Bitbucket, Medium, RSS blogs, and freeform content). The implementation uses a hybrid approach where GitHub has dedicated selection UI, while other sources are fetched and stored but lack a selection interface.
 
 ---
@@ -13,7 +14,7 @@ The application allows users to build a portfolio from multiple sources (GitHub,
 
 **Key Features:**
 - **Checkbox Selection**: Individual and "Select All" checkboxes for repositories
-- **Search & Filter**: 
+- **Search & Filter**:
   - Full-text search across repo names and descriptions
   - Owner filter (separate dropdowns for Users vs Organizations)
 - **Two-Column Layout**:
@@ -79,6 +80,7 @@ STORAGE_KEYS.PORTFOLIO_ITEMS = "foliolab_portfolio_items"
 4. POST to `/api/sources/rss` with `{ feedUrl, author }`
 5. Server returns posts as BlogPost[] objects
 6. **Posts are automatically added to portfolio:**
+
    ```typescript
    addPortfolioItems(posts as PortfolioItem[]);
    ```
@@ -91,7 +93,7 @@ STORAGE_KEYS.PORTFOLIO_ITEMS = "foliolab_portfolio_items"
 
 ### B. Missing Selection UI - THE GAP
 
-**Problem:** 
+**Problem:**
 - After fetching blog posts, they are immediately added to localStorage
 - **NO UI exists to browse/select individual blog posts**
 - User cannot see what posts were fetched
@@ -115,19 +117,19 @@ A component similar to `repo-select.tsx` but for blog posts that:
 **Medium Posts** (data-sources.tsx, lines 88-120)
 ```typescript
 const posts = data.posts as MediumPost[];
-addPortfolioItems(posts as PortfolioItem[]);  // Directly added, no selection UI
+addPortfolioItems(posts as PortfolioItem[]); // Directly added, no selection UI
 ```
 
 **GitLab Projects** (data-sources.tsx, lines 122-154)
 ```typescript
 const projects = data.projects as PortfolioItem[];
-addPortfolioItems(projects);  // Directly added, no selection UI
+addPortfolioItems(projects); // Directly added, no selection UI
 ```
 
 **Bitbucket Repositories** (data-sources.tsx, lines 156-188)
 ```typescript
 const repositories = data.repositories as PortfolioItem[];
-addPortfolioItems(repositories);  // Directly added, no selection UI
+addPortfolioItems(repositories); // Directly added, no selection UI
 ```
 
 ---
@@ -138,12 +140,12 @@ addPortfolioItems(repositories);  // Directly added, no selection UI
 
 ```typescript
 const STORAGE_KEYS = {
-  REPOSITORIES: "foliolab_repositories",              // Legacy GitHub repos
-  PORTFOLIO_ITEMS: "foliolab_portfolio_items",        // All sources combined
+  REPOSITORIES: "foliolab_repositories", // Legacy GitHub repos
+  PORTFOLIO_ITEMS: "foliolab_portfolio_items", // All sources combined
   GITHUB_TOKEN: "foliolab_github_token",
   GITLAB_TOKEN: "foliolab_gitlab_token",
   BITBUCKET_CREDENTIALS: "foliolab_bitbucket_credentials",
-  DATA_SOURCES: "foliolab_data_sources"               // Source configurations
+  DATA_SOURCES: "foliolab_data_sources", // Source configurations
 };
 ```
 
@@ -230,14 +232,17 @@ When `getPortfolioItems()` is called:
 **Key Steps:**
 
 1. **Load Selected Items**
+
    ```typescript
    const filtered = data.repositories.filter((repo) => repo.selected);
    setSelectedRepos(filtered);
    ```
+
    - **Currently only handles GitHub repos!**
    - Does NOT filter other portfolio item types
 
 2. **Generate Introduction**
+
    ```typescript
    if (filtered.length > 0) {
      generateIntro(filtered);  // AI-generated intro from repos
@@ -347,7 +352,7 @@ selectedRepos.map((repo, index) => (
 
 **Problem:** Blog posts, Medium articles, and other sources are fetched and stored but users cannot select which ones to include.
 
-**Root Cause:** 
+**Root Cause:**
 - Data sources page immediately adds all fetched items to portfolio
 - No component exists to display fetched items with selection checkboxes
 - Unlike GitHub flow which has `/repos` selection page, other sources have no selection page
@@ -482,14 +487,13 @@ getPortfolioItems() {
 
 ## Summary Table
 
-| Aspect | GitHub | Blog/RSS | Medium | GitLab | Bitbucket | Freeform |
-|--------|--------|----------|--------|--------|-----------|----------|
-| **Fetching** | Yes (OAuth) | Yes | Yes | Yes | Yes | Manual entry |
-| **Selection UI** | Yes (/repos) | ❌ Missing | ❌ Missing | ❌ Missing | ❌ Missing | ❌ Missing |
-| **Storage** | localStorage | localStorage | localStorage | localStorage | localStorage | localStorage |
-| **Selection Flag** | selected: bool | selected: bool | selected: bool | selected: bool | selected: bool | selected: bool |
-| **Portfolio Display** | Yes | ❌ No | ❌ No | ❌ No | ❌ No | ❌ No |
-| **AI Analysis** | Yes | No | No | No | No | No |
+| Aspect                | GitHub         | Blog/RSS       | Medium         | GitLab         | Bitbucket      | Freeform       |
+| --------------------- | -------------- | -------------- | -------------- | -------------- | -------------- | -------------- |
+| **Fetching**          | Yes (OAuth)    | Yes            | Yes            | Yes            | Yes            | Manual entry   |
+| **Selection UI**      | Yes (/repos)   | ❌ Missing     | ❌ Missing     | ❌ Missing     | ❌ Missing     | ❌ Missing     |
+| **Storage**           | localStorage   | localStorage   | localStorage   | localStorage   | localStorage   | localStorage   |
+| **Selection Flag**    | selected: bool | selected: bool | selected: bool | selected: bool | selected: bool | selected: bool |
+| **Portfolio Display** | Yes            | ❌ No          | ❌ No          | ❌ No          | ❌ No          | ❌ No          |
+| **AI Analysis**       | Yes            | No             | No             | No             | No             | No             |
 
 **Status: GitHub fully implemented, all other sources have data flow but missing selection and display UI**
-

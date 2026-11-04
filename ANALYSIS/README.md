@@ -5,6 +5,7 @@ This is a comprehensive analysis of how FolioLab handles selection and storage o
 ## Documents Included
 
 ### 1. EXECUTIVE_SUMMARY.md
+
 **Start here for a quick overview**
 
 - High-level summary of the three layers (Fetch, Select, Display)
@@ -15,6 +16,7 @@ This is a comprehensive analysis of how FolioLab handles selection and storage o
 **Read this if:** You want to understand the problem in 5 minutes
 
 ### 2. portfolio_selection_flow_analysis.md
+
 **Comprehensive technical deep dive**
 
 Covers:
@@ -30,6 +32,7 @@ Covers:
 **Read this if:** You want the full technical picture
 
 ### 3. flow_diagrams.md
+
 **Visual representations of the flows**
 
 Contains:
@@ -43,6 +46,7 @@ Contains:
 **Read this if:** You're a visual learner or want to show the architecture to others
 
 ### 4. code_locations_reference.md
+
 **Quick navigation guide to the codebase**
 
 Contains:
@@ -98,13 +102,13 @@ User can:
 
 ## Key Files at a Glance
 
-| File | Purpose | Status |
-|------|---------|--------|
-| `repo-select.tsx` | GitHub selection UI | ✓ Works |
-| `data-sources.tsx` | Fetch forms for all sources | ✓ Works partially |
-| `portfolio-preview.tsx` | Display portfolio | ✓ GitHub only |
-| `storage.ts` | localStorage management | ✓ Supports all sources |
-| `schema.ts` | Type definitions | ✓ Supports all sources |
+| File                    | Purpose                     | Status                 |
+| ----------------------- | --------------------------- | ---------------------- |
+| `repo-select.tsx`       | GitHub selection UI         | ✓ Works                |
+| `data-sources.tsx`      | Fetch forms for all sources | ✓ Works partially      |
+| `portfolio-preview.tsx` | Display portfolio           | ✓ GitHub only          |
+| `storage.ts`            | localStorage management     | ✓ Supports all sources |
+| `schema.ts`             | Type definitions            | ✓ Supports all sources |
 
 ---
 
@@ -165,15 +169,19 @@ README.md (this file)
 ## How to Use These Docs
 
 ### If you have 5 minutes:
+
 Read EXECUTIVE_SUMMARY.md
 
 ### If you have 15 minutes:
+
 Read EXECUTIVE_SUMMARY.md + flow_diagrams.md
 
 ### If you have 30 minutes:
+
 Read all of EXECUTIVE_SUMMARY.md, then skim portfolio_selection_flow_analysis.md sections 1-4
 
 ### If you're about to code:
+
 Read EXECUTIVE_SUMMARY.md sections "The Fix Strategy", then use code_locations_reference.md to navigate the actual code
 
 ---
@@ -202,10 +210,10 @@ The app maintains both for backward compatibility with automatic migration.
 
 ```typescript
 // These functions exist and are production-ready:
-togglePortfolioItemSelection(id)      // Toggle selected flag
-getPortfolioItemsBySource(source)     // Filter by source type
-getPortfolioItems()                   // Get all items
-addPortfolioItems(items)              // Add multiple items
+togglePortfolioItemSelection(id); // Toggle selected flag
+getPortfolioItemsBySource(source); // Filter by source type
+getPortfolioItems(); // Get all items
+addPortfolioItems(items); // Add multiple items
 
 // They're just never called for non-GitHub items!
 ```
@@ -249,4 +257,3 @@ addPortfolioItems(items)              // Add multiple items
 - What functions do I need? → See code_locations_reference.md section "Storage Functions"
 - Where should I add code? → See code_locations_reference.md section "To Fix This"
 - What's the current status? → See EXECUTIVE_SUMMARY.md quick reference table
-

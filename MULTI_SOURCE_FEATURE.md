@@ -1,33 +1,39 @@
 # Multi-Source Portfolio Data Feature
 
 ## Overview
+
 This feature expands FolioLab to support multiple data sources beyond GitHub repositories, allowing users to create richer, more comprehensive portfolios while maintaining the privacy-first approach (no database, all data in browser localStorage).
 
 ## New Data Sources
 
 ### 1. Blog RSS Feed
+
 - Import blog posts from any RSS/Atom feed
 - Automatically extracts title, description, publication date, and tags
 - Supports author name override
 
 ### 2. Medium Posts
+
 - Fetch articles from Medium via RSS feed
 - Supports username or profile URL input
 - Extracts read time, tags, and publication date
 - No Medium API key required (uses public RSS)
 
 ### 3. GitLab Projects
+
 - Import repositories from GitLab
 - Requires GitLab Personal Access Token (read_api scope)
 - Fetches README for project descriptions
 - Similar metadata to GitHub (stars, language, topics)
 
 ### 4. Bitbucket Repositories
+
 - Support for Bitbucket Cloud repositories
 - Uses App Password authentication
 - Fetches repository metadata and README files
 
 ### 5. Free-form Content
+
 - Add custom portfolio items
 - Categories: Project, Achievement, Skill, Experience, Other
 - Supports markdown content with optional URLs
@@ -38,12 +44,14 @@ This feature expands FolioLab to support multiple data sources beyond GitHub rep
 ### Backend Changes
 
 #### New Libraries (`server/lib/`)
+
 - **rss.ts** - RSS feed parser with privacy-focused error handling
 - **medium.ts** - Medium post fetcher using RSS
 - **gitlab.ts** - GitLab API integration
 - **bitbucket.ts** - Bitbucket API integration
 
 #### New Routes (`server/routes/sources.ts`)
+
 ```
 POST /api/sources/rss              - Fetch blog posts from RSS
 POST /api/sources/medium           - Fetch Medium posts
@@ -58,25 +66,36 @@ POST /api/sources/analyze/:id      - AI analysis for any content type
 ### Frontend Changes
 
 #### New Components
+
 - **data-sources.tsx** - Main UI for adding different data sources
   - Card-based interface for source selection
   - Form-based input for each source type
   - Real-time validation and error handling
 
 #### Updated Components
+
 - **storage.ts** - Extended to support multi-source data management
   - New storage keys for different credentials
   - Portfolio items API (replaces repository-only API)
   - Backward compatible migration from old format
 
 #### New Routes
+
 - `/data-sources` - Data source selection and configuration page
 
 ### Schema Updates (`shared/schema.ts`)
 
 #### New Types
+
 ```typescript
-type SourceType = 'github' | 'gitlab' | 'bitbucket' | 'blog_rss' | 'medium' | 'linkedin' | 'freeform';
+type SourceType =
+  | "github"
+  | "gitlab"
+  | "bitbucket"
+  | "blog_rss"
+  | "medium"
+  | "linkedin"
+  | "freeform";
 
 // Unified portfolio item type (discriminated union)
 type PortfolioItem =
@@ -98,11 +117,13 @@ Each source type has its own schema with common fields:
 ## Privacy & Security
 
 ### Client-First Architecture
+
 - All user data stored in browser localStorage
 - No backend database or logging of user content
 - Tokens and credentials never logged
 
 ### Storage Keys
+
 ```
 foliolab_repositories       - GitHub repos (legacy)
 foliolab_portfolio_items    - All portfolio items (new)
@@ -113,6 +134,7 @@ foliolab_data_sources       - Source configurations
 ```
 
 ### Security Considerations
+
 1. **API Tokens** - Stored in localStorage, never sent to our backend except for API calls
 2. **Rate Limiting** - Built-in delays to respect API limits
 3. **Error Handling** - Sanitized errors that don't expose user data
@@ -156,12 +178,14 @@ foliolab_data_sources       - Source configurations
 ## User Experience
 
 ### Navigation
+
 - GitHub repos page includes link: "add content from other sources"
 - Data sources page has cards for each source type
 - Each source has dedicated form with validation
 - Back/Continue buttons for smooth navigation
 
 ### Feedback
+
 - Loading states during fetch operations
 - Success messages showing item count
 - Clear error messages with troubleshooting hints
@@ -170,11 +194,13 @@ foliolab_data_sources       - Source configurations
 ## API Integration Details
 
 ### RSS/Medium (No Auth)
+
 - Public RSS feeds
 - No API keys needed
 - Rate limiting handled by feed providers
 
 ### GitLab (Personal Access Token)
+
 ```
 Create at: Settings → Access Tokens
 Required scopes: read_api
@@ -182,6 +208,7 @@ Token format: glpat-xxxxxxxxxxxxxxxxxxxx
 ```
 
 ### Bitbucket (App Password)
+
 ```
 Create at: Settings → App passwords
 Required permissions: repository:read
@@ -191,12 +218,14 @@ Auth: Basic authentication (username + app password)
 ## Migration Strategy
 
 ### Backward Compatibility
+
 - Old `foliolab_repositories` storage key still supported
 - Automatic migration to new `foliolab_portfolio_items` format
 - Existing GitHub workflows unchanged
 - New features optional, don't break existing users
 
 ### Data Migration
+
 ```typescript
 // Automatic on first load
 if (no portfolio items && has repositories) {
@@ -220,6 +249,7 @@ if (no portfolio items && has repositories) {
 ## Future Enhancements
 
 ### Potential Additional Sources
+
 - LinkedIn (requires OAuth, API restrictions)
 - Dev.to posts
 - Hashnode articles
@@ -228,6 +258,7 @@ if (no portfolio items && has repositories) {
 - StackOverflow profiles
 
 ### Planned Improvements
+
 - Bulk import/export
 - Source synchronization (auto-update)
 - Custom RSS refresh intervals
@@ -249,6 +280,7 @@ if (no portfolio items && has repositories) {
 ## Files Modified/Created
 
 ### Created
+
 - `server/lib/rss.ts`
 - `server/lib/medium.ts`
 - `server/lib/gitlab.ts`
@@ -257,6 +289,7 @@ if (no portfolio items && has repositories) {
 - `client/src/pages/data-sources.tsx`
 
 ### Modified
+
 - `shared/schema.ts` - Added multi-source types
 - `server/index.ts` - Registered new routes
 - `client/src/lib/storage.ts` - Extended for multi-source
@@ -267,12 +300,14 @@ if (no portfolio items && has repositories) {
 ## Configuration
 
 ### Environment Variables
+
 No new environment variables required. Existing variables still used:
 - `GITHUB_CLIENT_ID`
 - `GITHUB_CLIENT_SECRET`
 - `OPENAI_API_KEY`
 
 ### User Credentials
+
 Users provide their own:
 - GitLab Personal Access Tokens
 - Bitbucket App Passwords
@@ -283,6 +318,7 @@ All stored client-side only.
 ## Support & Documentation
 
 ### User Documentation Needed
+
 - How to create GitLab Personal Access Token
 - How to create Bitbucket App Password
 - RSS feed URL format examples
@@ -290,6 +326,7 @@ All stored client-side only.
 - Privacy policy updates (if applicable)
 
 ### Developer Documentation
+
 - API endpoint documentation
 - Schema definitions
 - Storage key conventions
