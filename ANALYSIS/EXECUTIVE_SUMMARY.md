@@ -85,16 +85,14 @@ Posts are invisible ❌
 
 ```javascript
 // GitHub repos (legacy key)
-localStorage.foliolab_repositories = [
-  { id: 1, name: "repo", selected: true, source: "github" }
-]
+localStorage.foliolab_repositories = [{ id: 1, name: "repo", selected: true, source: "github" }];
 
 // ALL items (new unified key)
 localStorage.foliolab_portfolio_items = [
   { id: 1, name: "repo", selected: true, source: "github" },
   { id: "post-1", title: "Blog", selected: false, source: "blog_rss" },
-  { id: "med-1", title: "Medium", selected: false, source: "medium" }
-]
+  { id: "med-1", title: "Medium", selected: false, source: "medium" },
+];
 ```
 
 **Key insight:** The `selected` flag exists for ALL item types, but users can only toggle it for GitHub repos.
@@ -131,7 +129,7 @@ toggleRepositorySelection(id)         // Legacy GitHub-only toggle
 **Example:**
 ```typescript
 // data-sources.tsx line 76
-addPortfolioItems(posts);  // ← Directly added, no UI shown!
+addPortfolioItems(posts); // ← Directly added, no UI shown!
 ```
 
 ### Gap #2: Portfolio Preview Doesn't Render Non-GitHub Items
@@ -151,7 +149,7 @@ addPortfolioItems(posts);  // ← Directly added, no UI shown!
 const { data } = useQuery<{ repositories: Repository[] }>({
   queryKey: ["/api/repositories"],
   // ❌ Only queries GitHub repos, not portfolio items
-})
+});
 ```
 
 ### Gap #3: No Navigation Between Layers
@@ -196,6 +194,7 @@ The infrastructure to manage `selected` flag exists:
 Three components need to be created/updated:
 
 ### 1. Create `/portfolio-items` Selection Page
+
 - Display all portfolio items grouped by source
 - Show checkboxes for each item
 - Allow search and filtering
@@ -205,17 +204,20 @@ Three components need to be created/updated:
 **Template:** Copy from `repo-select.tsx`, adapt for multiple item types
 
 ### 2. Update `/data-sources` Page
+
 - After fetching items, navigate to `/portfolio-items` page
 - OR: Show selection UI inline on same page
 - Give user feedback about what was imported
 
-### 3. Update `/preview` Page  
+### 3. Update `/preview` Page
+
 - Query all portfolio items (not just repos)
 - Render items based on source type
 - Show only items with `selected: true`
 - Maintain existing editing capabilities
 
 ### 4. Update Navigation
+
 - Add `/portfolio-items` route
 - Add navigation buttons between pages
 - Create logical workflow
@@ -229,7 +231,7 @@ Three components need to be created/updated:
 2. **Unused storage functions:** `togglePortfolioItemSelection()` and `getPortfolioItemsBySource()` exist but never called
    - These are ready to use once UI is added
 
-3. **Hardcoded GitHub-only rendering:** `portfolio-preview.tsx` assumes Repository[] 
+3. **Hardcoded GitHub-only rendering:** `portfolio-preview.tsx` assumes Repository[]
    - Would need refactoring to support discriminated union rendering
 
 ## Files That Need Changes
@@ -265,24 +267,23 @@ client/src/
 
 ## Quick Reference
 
-| Aspect | Status | File | Key Function |
-|--------|--------|------|--------------|
-| GitHub Fetching | ✓ Complete | `github.ts` | `fetchRepositories()` |
-| GitHub Selection | ✓ Complete | `repo-select.tsx` | `toggleRepo()` |
-| GitHub Display | ✓ Complete | `portfolio-preview.tsx` | `renderPortfolioContent()` |
-| Blog Fetching | ✓ Complete | `sources.ts` | POST `/api/sources/rss` |
-| Blog Selection | ✗ Missing | N/A | Should use `togglePortfolioItemSelection()` |
-| Blog Display | ✗ Missing | N/A | Not queried or rendered |
-| Medium Fetching | ✓ Complete | `sources.ts` | POST `/api/sources/medium` |
-| Medium Selection | ✗ Missing | N/A | Should use `togglePortfolioItemSelection()` |
-| Medium Display | ✗ Missing | N/A | Not queried or rendered |
-| GitLab Fetching | ✓ Complete | `sources.ts` | POST `/api/sources/gitlab` |
-| GitLab Selection | ✗ Missing | N/A | Should use `togglePortfolioItemSelection()` |
-| GitLab Display | ✗ Missing | N/A | Not queried or rendered |
-| Bitbucket Fetching | ✓ Complete | `sources.ts` | POST `/api/sources/bitbucket` |
-| Bitbucket Selection | ✗ Missing | N/A | Should use `togglePortfolioItemSelection()` |
-| Bitbucket Display | ✗ Missing | N/A | Not queried or rendered |
-| Freeform Creation | ✓ Complete | `sources.ts` | POST `/api/sources/freeform` |
-| Freeform Selection | ✗ Missing | N/A | Should use `togglePortfolioItemSelection()` |
-| Freeform Display | ✗ Missing | N/A | Not queried or rendered |
-
+| Aspect              | Status     | File                    | Key Function                                |
+| ------------------- | ---------- | ----------------------- | ------------------------------------------- |
+| GitHub Fetching     | ✓ Complete | `github.ts`             | `fetchRepositories()`                       |
+| GitHub Selection    | ✓ Complete | `repo-select.tsx`       | `toggleRepo()`                              |
+| GitHub Display      | ✓ Complete | `portfolio-preview.tsx` | `renderPortfolioContent()`                  |
+| Blog Fetching       | ✓ Complete | `sources.ts`            | POST `/api/sources/rss`                     |
+| Blog Selection      | ✗ Missing  | N/A                     | Should use `togglePortfolioItemSelection()` |
+| Blog Display        | ✗ Missing  | N/A                     | Not queried or rendered                     |
+| Medium Fetching     | ✓ Complete | `sources.ts`            | POST `/api/sources/medium`                  |
+| Medium Selection    | ✗ Missing  | N/A                     | Should use `togglePortfolioItemSelection()` |
+| Medium Display      | ✗ Missing  | N/A                     | Not queried or rendered                     |
+| GitLab Fetching     | ✓ Complete | `sources.ts`            | POST `/api/sources/gitlab`                  |
+| GitLab Selection    | ✗ Missing  | N/A                     | Should use `togglePortfolioItemSelection()` |
+| GitLab Display      | ✗ Missing  | N/A                     | Not queried or rendered                     |
+| Bitbucket Fetching  | ✓ Complete | `sources.ts`            | POST `/api/sources/bitbucket`               |
+| Bitbucket Selection | ✗ Missing  | N/A                     | Should use `togglePortfolioItemSelection()` |
+| Bitbucket Display   | ✗ Missing  | N/A                     | Not queried or rendered                     |
+| Freeform Creation   | ✓ Complete | `sources.ts`            | POST `/api/sources/freeform`                |
+| Freeform Selection  | ✗ Missing  | N/A                     | Should use `togglePortfolioItemSelection()` |
+| Freeform Display    | ✗ Missing  | N/A                     | Not queried or rendered                     |

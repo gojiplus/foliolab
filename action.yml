@@ -21,7 +21,7 @@ inputs:
     description: AI provider key, needed for new or changed summaries
   force:
     description: Regenerate all selected summaries
-    default: 'false'
+    default: "false"
 outputs:
   data-file:
     description: Absolute path to saved portfolio data
