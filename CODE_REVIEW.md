@@ -12,12 +12,14 @@ This document contains actionable recommendations to improve code quality, secur
 
 **Location**: `tsconfig.json:19`
 **Issue**: Missing type definitions causing build failures
+
 ```
 error TS2688: Cannot find type definition file for 'node'.
 error TS2688: Cannot find type definition file for 'vite/client'.
 ```
 
 **Fix**: Install missing type definitions
+
 ```bash
 npm install --save-dev @types/node @vitejs/plugin-react
 ```
@@ -32,6 +34,7 @@ npm install --save-dev @types/node @vitejs/plugin-react
 **Issue**: In development, CORS allows `*` origin, which is overly permissive
 
 **Current Code**:
+
 ```typescript
 let origin = "*";
 if (process.env.NODE_ENV === "production") {
@@ -40,6 +43,7 @@ if (process.env.NODE_ENV === "production") {
 ```
 
 **Recommendation**: Use environment-specific CORS configuration from the start
+
 ```typescript
 const allowedOrigins =
   process.env.NODE_ENV === "production"
@@ -64,12 +68,14 @@ if (requestOrigin && allowedOrigins.includes(requestOrigin)) {
 **Issue**: Error is thrown after response is sent, which could crash the server
 
 **Current Code**:
+
 ```typescript
 res.status(status).json({ message });
 throw err; // This will crash the server!
 ```
 
 **Fix**: Log error instead of throwing
+
 ```typescript
 res.status(status).json({ message });
 console.error("Error handled:", err);
@@ -85,6 +91,7 @@ console.error("Error handled:", err);
 **Issue**: No validation of required environment variables at startup
 
 **Recommendation**: Add startup validation
+
 ```typescript
 // Add at the top of server/index.ts after imports
 function validateEnvironment() {
@@ -114,6 +121,7 @@ validateEnvironment();
 **Issue**: Identical pagination logic repeated 3 times
 
 **Recommendation**: Extract to reusable function
+
 ```typescript
 async function paginateGithubAPI<T>(
   fetchPage: (page: number) => Promise<T[]>,
@@ -154,11 +162,13 @@ const organizations = await paginateGithubAPI((page) =>
 **Issue**: Using `(error as any)` loses type safety
 
 **Current Code**:
+
 ```typescript
 if ((error as any).status === 404) {
 ```
 
 **Better Approach**:
+
 ```typescript
 // Define proper error type
 interface OctokitError extends Error {
@@ -190,6 +200,7 @@ if (isOctokitError(error) && error.status === 404) {
 **Issue**: Error responses have inconsistent structure
 
 **Examples**:
+
 ```typescript
 // Route 1: { error: string }
 // Route 2: { error: string, details: string }
@@ -198,6 +209,7 @@ if (isOctokitError(error) && error.status === 404) {
 ```
 
 **Recommendation**: Create standard error response utility
+
 ```typescript
 // server/lib/error-responses.ts
 interface ErrorResponse {
@@ -238,6 +250,7 @@ res
 **Issue**: Creating new OpenAI client instance for each request
 
 **Current Code**:
+
 ```typescript
 async function generateWithOpenAI(...) {
   const openai = new OpenAI({ ... }); // New instance every time
@@ -245,6 +258,7 @@ async function generateWithOpenAI(...) {
 ```
 
 **Better Approach**:
+
 ```typescript
 // Create singleton instance
 let openaiClient: OpenAI | null = null;
@@ -275,6 +289,7 @@ function getOpenAIClient(apiKey: string): OpenAI {
 **Issue**: No validation that `id` parameter is a valid number
 
 **Current Code**:
+
 ```typescript
 const { id } = req.params;
 const repoId = parseInt(id);
@@ -282,6 +297,7 @@ const repoId = parseInt(id);
 ```
 
 **Fix**:
+
 ```typescript
 const { id } = req.params;
 const repoId = parseInt(id);
@@ -306,12 +322,14 @@ if (isNaN(repoId)) {
 **Issue**: Hardcoded values without explanation
 
 **Current Code**:
+
 ```typescript
 max_tokens: 800,
 temperature: 0.7,
 ```
 
 **Better**:
+
 ```typescript
 // At top of file
 const LLM_CONFIG = {
@@ -337,6 +355,7 @@ temperature: LLM_CONFIG.TEMPERATURE,
 **Issue**: Fixed batch size of 5, no error recovery
 
 **Current Code**:
+
 ```typescript
 const batchSize = 5;
 for (let i = 0; i < repositories.length; i += batchSize) {
@@ -345,6 +364,7 @@ for (let i = 0; i < repositories.length; i += batchSize) {
 ```
 
 **Improvements**:
+
 ```typescript
 const BATCH_SIZE = parseInt(process.env.GITHUB_BATCH_SIZE || '10');
 const BATCH_DELAY = parseInt(process.env.GITHUB_BATCH_DELAY_MS || '100');
@@ -378,6 +398,7 @@ for (let i = 0; i < repositories.length; i += BATCH_SIZE) {
 **Issue**: Public functions lack documentation
 
 **Example**:
+
 ```typescript
 /**
  * Generates an AI-powered summary for a repository
@@ -415,6 +436,7 @@ async function generateRepoSummary(
 **Issue**: Using `console.log/error/warn` directly
 
 **Recommendation**: Implement structured logging
+
 ```typescript
 // server/lib/logger.ts
 import util from "util";
@@ -479,6 +501,7 @@ export const logger = new Logger();
 **Issue**: No timeout on HTTP requests, could lead to hanging connections
 
 **Recommendation**:
+
 ```typescript
 const server = await registerRoutes(app);
 
@@ -504,6 +527,7 @@ server.on("timeout", (socket) => {
 **Issue**: Simple substring truncation can cut in middle of sentence
 
 **Current Code**:
+
 ```typescript
 const maxReadmeLength = 2000;
 const trimmedReadme =
@@ -513,6 +537,7 @@ const trimmedReadme =
 ```
 
 **Better Approach**:
+
 ```typescript
 function intelligentTruncate(text: string, maxLength: number): string {
   if (text.length <= maxLength) return text;
@@ -549,6 +574,7 @@ function intelligentTruncate(text: string, maxLength: number): string {
 ### 16. Add Health Check Endpoint
 
 **Recommendation**: Add endpoint for monitoring
+
 ```typescript
 // server/routes/health.ts
 router.get("/health", (req, res) => {
@@ -584,6 +610,7 @@ router.get("/health/ready", async (req, res) => {
 ### 17. Add Rate Limiting
 
 **Recommendation**: Prevent API abuse
+
 ```typescript
 import rateLimit from "express-rate-limit";
 
@@ -601,6 +628,7 @@ app.use("/api/", limiter);
 ### 18. Add Request ID for Tracing
 
 **Recommendation**: Track requests across services
+
 ```typescript
 import { v4 as uuidv4 } from "uuid";
 
@@ -616,6 +644,7 @@ app.use((req, res, next) => {
 ### 19. Improve GitHub Actions / CI
 
 **Recommendation**: Add GitHub Actions workflow
+
 ```yaml
 # .github/workflows/ci.yml
 name: CI
@@ -641,6 +670,7 @@ jobs:
 ### 20. Add Security Headers
 
 **Recommendation**: Improve security posture
+
 ```typescript
 import helmet from "helmet";
 
