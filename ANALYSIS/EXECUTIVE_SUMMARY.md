@@ -13,6 +13,7 @@ The FolioLab application has **THREE LAYERS** for handling portfolio items from 
 ### What Works (GitHub)
 
 Users can:
+
 1. Connect GitHub account
 2. Go to `/repos` page
 3. See all their GitHub repositories with checkboxes
@@ -22,6 +23,7 @@ Users can:
 7. See a beautiful portfolio preview with all selected repos
 
 **Components involved:**
+
 - `repo-select.tsx` - Selection UI
 - `storage.ts` - Selection state management
 - `portfolio-preview.tsx` - Display
@@ -29,6 +31,7 @@ Users can:
 ### What's Broken (Everything Else)
 
 Users can:
+
 1. Go to `/data-sources` page
 2. Enter RSS feed URL, Medium username, etc.
 3. Click "Import"
@@ -40,6 +43,7 @@ Users can:
    - Portfolio preview doesn't show them
 
 **Why it's broken:**
+
 - `data-sources.tsx` fetches items but immediately stores them
 - No selection UI exists for non-GitHub items
 - `portfolio-preview.tsx` hardcoded to only display GitHub repos
@@ -117,16 +121,19 @@ toggleRepositorySelection(id)         // Legacy GitHub-only toggle
 ### Gap #1: Missing Selection UI for Non-GitHub Sources
 
 **Problem:**
+
 - Blog posts, Medium articles, GitLab projects, Bitbucket repos are fetched and stored
 - But users never see them or get to choose which ones to include
 - Items are added with `selected: false` by default
 
 **Impact:**
+
 - User wastes time importing posts they didn't want
 - Can't curate portfolio content from multiple sources
 - Feature is incomplete for 5 out of 6 sources
 
 **Example:**
+
 ```typescript
 // data-sources.tsx line 76
 addPortfolioItems(posts); // ← Directly added, no UI shown!
@@ -135,15 +142,18 @@ addPortfolioItems(posts); // ← Directly added, no UI shown!
 ### Gap #2: Portfolio Preview Doesn't Render Non-GitHub Items
 
 **Problem:**
+
 - `portfolio-preview.tsx` is hardcoded to only query and display GitHub repos
 - Even though blog posts are in localStorage, they're never displayed
 - Code assumes only Repository objects exist
 
 **Impact:**
+
 - Multi-source portfolios don't work
 - Users think their imports failed (they're just invisible)
 
 **Code example:**
+
 ```typescript
 // portfolio-preview.tsx line 72-75
 const { data } = useQuery<{ repositories: Repository[] }>({
@@ -155,11 +165,13 @@ const { data } = useQuery<{ repositories: Repository[] }>({
 ### Gap #3: No Navigation Between Layers
 
 **Problem:**
+
 - After importing blog posts, there's no link to view/select them
 - User must manually navigate to `/preview` to see anything
 - No workflow that ties data sources to selection to preview
 
 **Impact:**
+
 - Confusing user experience
 - Users don't know if their import worked
 - No clear path from "add data" to "build portfolio"
@@ -183,6 +195,7 @@ After user imports blog posts and Medium articles, their localStorage contains:
 ```
 
 The infrastructure to manage `selected` flag exists:
+
 - `togglePortfolioItemSelection(id)` - Ready to use but never called
 - Schema has `selected: boolean` for all types
 - Storage layer handles it correctly
@@ -248,18 +261,21 @@ client/src/
 ## Summary
 
 **The Good:**
+
 - Storage layer supports multi-source items
 - All schema types defined with selection support
 - Data fetching works for all sources
 - Infrastructure for managing selection exists
 
 **The Bad:**
+
 - UI for selecting non-GitHub items is completely missing
 - Portfolio preview can't display non-GitHub items
 - No workflow connecting the layers
 - Users can't control portfolio composition from non-GitHub sources
 
 **The Status:**
+
 - GitHub: Feature complete and working
 - Everything else: Feature 70% done (data layer works, UI missing)
 

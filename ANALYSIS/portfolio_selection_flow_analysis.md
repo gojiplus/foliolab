@@ -13,6 +13,7 @@ The application allows users to build a portfolio from multiple sources (GitHub,
 **Location:** `/home/user/foliolab/client/src/pages/repo-select.tsx`
 
 **Key Features:**
+
 - **Checkbox Selection**: Individual and "Select All" checkboxes for repositories
 - **Search & Filter**:
   - Full-text search across repo names and descriptions
@@ -47,6 +48,7 @@ STORAGE_KEYS.PORTFOLIO_ITEMS = "foliolab_portfolio_items"
 ```
 
 **Data Flow:**
+
 1. User checks/unchecks checkbox
 2. `toggleRepo()` mutation fires (React Query)
 3. Storage is updated: `saveRepositories(updatedRepos)`
@@ -59,6 +61,7 @@ STORAGE_KEYS.PORTFOLIO_ITEMS = "foliolab_portfolio_items"
 **Location:** `client/src/pages/repo-select.tsx` (lines 153-224)
 
 **Process:**
+
 1. User clicks "Generate Portfolio ({selectedCount} selected)" button
 2. `analyzeRepos()` is called
 3. For each selected repository:
@@ -74,6 +77,7 @@ STORAGE_KEYS.PORTFOLIO_ITEMS = "foliolab_portfolio_items"
 ### A. Fetching Process
 
 **Flow:**
+
 1. User navigates to `/data-sources` page
 2. User selects RSS source and enters feed URL
 3. `handleRSSSubmit()` fires (data-sources.tsx, lines 53-86)
@@ -86,6 +90,7 @@ STORAGE_KEYS.PORTFOLIO_ITEMS = "foliolab_portfolio_items"
    ```
 
 **Server Implementation:** `server/routes/sources.ts` (lines 16-32)
+
 - Fetches RSS feed using `getBlogPostsFromRSS(feedUrl, author)`
 - Returns posts array with these fields:
   - id, title, description, url, summary, source, publishedAt, author, tags, feedUrl
@@ -94,6 +99,7 @@ STORAGE_KEYS.PORTFOLIO_ITEMS = "foliolab_portfolio_items"
 ### B. Missing Selection UI - THE GAP
 
 **Problem:**
+
 - After fetching blog posts, they are immediately added to localStorage
 - **NO UI exists to browse/select individual blog posts**
 - User cannot see what posts were fetched
@@ -101,6 +107,7 @@ STORAGE_KEYS.PORTFOLIO_ITEMS = "foliolab_portfolio_items"
 
 **What Should Exist:**
 A component similar to `repo-select.tsx` but for blog posts that:
+
 - Shows all fetched blog posts with checkboxes
 - Allows bulk selection/deselection
 - Displays post metadata (title, description, author, date)
@@ -108,6 +115,7 @@ A component similar to `repo-select.tsx` but for blog posts that:
 - Shows a summary of selected posts
 
 **Current Behavior:**
+
 - Posts added with `selected: false`
 - User must go directly to `/preview` to see anything
 - No way to filter/choose which posts appear in portfolio
@@ -115,18 +123,21 @@ A component similar to `repo-select.tsx` but for blog posts that:
 ### C. Other Sources Have Same Gap
 
 **Medium Posts** (data-sources.tsx, lines 88-120)
+
 ```typescript
 const posts = data.posts as MediumPost[];
 addPortfolioItems(posts as PortfolioItem[]); // Directly added, no selection UI
 ```
 
 **GitLab Projects** (data-sources.tsx, lines 122-154)
+
 ```typescript
 const projects = data.projects as PortfolioItem[];
 addPortfolioItems(projects); // Directly added, no selection UI
 ```
 
 **Bitbucket Repositories** (data-sources.tsx, lines 156-188)
+
 ```typescript
 const repositories = data.repositories as PortfolioItem[];
 addPortfolioItems(repositories); // Directly added, no selection UI
@@ -187,6 +198,7 @@ All portfolio item types have `selected: boolean` field:
 ### C. Storage Functions
 
 **Unified Portfolio Items API:**
+
 ```typescript
 // Fetch all items
 getPortfolioItems(): PortfolioItem[]
@@ -216,6 +228,7 @@ getPortfolioItemsBySource(source: SourceType): PortfolioItem[]
 ### D. Migration Logic
 
 When `getPortfolioItems()` is called:
+
 1. Checks for `foliolab_portfolio_items` in localStorage
 2. If not found, checks for legacy `foliolab_repositories`
 3. If legacy repos exist, migrates them to portfolio items format
@@ -260,6 +273,7 @@ When `getPortfolioItems()` is called:
 ### B. Issue: Portfolio Items Not Displayed
 
 **Current Implementation Only Renders GitHub Repos:**
+
 ```typescript
 // From portfolio-preview.tsx line 72-75
 const { data, isLoading, error } = useQuery<{ repositories: Repository[] }>({
@@ -276,6 +290,7 @@ selectedRepos.map((repo, index) => (
 ```
 
 **What's Missing:**
+
 - Query should also fetch portfolio items (including blog posts, Medium, etc.)
 - Portfolio rendering should handle different source types
 - Blog posts should show title, description, author, publish date, tags
@@ -353,11 +368,13 @@ selectedRepos.map((repo, index) => (
 **Problem:** Blog posts, Medium articles, and other sources are fetched and stored but users cannot select which ones to include.
 
 **Root Cause:**
+
 - Data sources page immediately adds all fetched items to portfolio
 - No component exists to display fetched items with selection checkboxes
 - Unlike GitHub flow which has `/repos` selection page, other sources have no selection page
 
 **Impact:**
+
 - Users can't control portfolio content from non-GitHub sources
 - All fetched items are stored even if user doesn't want them
 
@@ -366,11 +383,13 @@ selectedRepos.map((repo, index) => (
 **Problem:** `portfolio-preview.tsx` only handles GitHub repositories
 
 **Root Cause:**
+
 - Query only fetches `["/api/repositories"]` (GitHub only)
 - Render logic hardcoded to handle Repository objects
 - No logic to differentiate or render BlogPost, MediumPost, etc.
 
 **Impact:**
+
 - Blog posts are stored but never displayed in final portfolio
 - Multi-source portfolios don't work as intended
 
@@ -379,6 +398,7 @@ selectedRepos.map((repo, index) => (
 **Problem:** Need a page between data fetching and portfolio preview to manage all selected items
 
 **What's Needed:**
+
 - A new page (e.g., `/portfolio-items`) showing:
   - All portfolio items grouped by source
   - Checkboxes to select/deselect each item
@@ -430,6 +450,7 @@ localStorage.foliolab_gitlab_token = "glpat_xxxx..."
 ### Backward Compatibility Migration
 
 When app loads:
+
 ```typescript
 getPortfolioItems() {
   let data = localStorage.getItem("foliolab_portfolio_items")

@@ -153,6 +153,7 @@ Layer 3: Display
 Blog posts and other sources are fetched and stored but users can't see or select them.
 
 **Location:** `data-sources.tsx` line 76 (and similar for other sources)
+
 ```typescript
 addPortfolioItems(posts); // ← Items stored immediately without showing UI
 ```
@@ -164,6 +165,7 @@ addPortfolioItems(posts); // ← Items stored immediately without showing UI
 The preview page is hardcoded to only query and display GitHub repositories.
 
 **Location:** `portfolio-preview.tsx` lines 72-75
+
 ```typescript
 const { data } = useQuery<{ repositories: Repository[] }>({
   queryKey: ["/api/repositories"], // ← Only GitHub!
@@ -268,6 +270,7 @@ These are production-ready. The GitHub selection page uses similar functions (le
 ## Questions?
 
 Look in the documents for:
+
 - **"How does GitHub selection work?"** → portfolio_selection_flow_analysis.md section 1
 - **"How are blog posts stored?"** → portfolio_selection_flow_analysis.md section 3
 - **"Where exactly is the gap?"** → EXECUTIVE_SUMMARY.md or section 6 of main analysis

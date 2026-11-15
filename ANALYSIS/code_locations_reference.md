@@ -28,6 +28,7 @@ foliolab/
 **File:** `/home/user/foliolab/shared/schema.ts`
 
 Defines all data structures. Key lines:
+
 - Line 4-14: Source types enum
 - Line 17-39: Repository schema (GitHub)
 - Line 91-104: BlogPost schema
@@ -35,6 +36,7 @@ Defines all data structures. Key lines:
 - Line 152-160: Unified PortfolioItem discriminated union
 
 **Key Pattern:** Every portfolio item type has:
+
 ```typescript
 selected: z.boolean()     // Line 24, 49, 74, 98, 113, 129, 144
 source: z.literal(...)    // Line 25, 50, 75, 99, 114, 130, 145
@@ -55,6 +57,7 @@ All localStorage operations. Key functions:
 | `getPortfolioItemsBySource()`    | 243-245 | Filter items by source                    |
 
 **Storage Keys:**
+
 ```typescript
 // Line 3-10
 STORAGE_KEYS = {
@@ -84,6 +87,7 @@ Complete selection implementation:
 | Generate Portfolio | 153-224 | Analyze each repo + navigate         |
 
 **Key Components:**
+
 - Checkboxes with search filter (lines 267-278)
 - Owner filter dropdown (lines 245-264)
 - Available repos list (lines 312-405)
@@ -105,6 +109,7 @@ Fetch forms for all sources:
 
 **Critical Issue Pattern (Same on all):**
 All handlers end with:
+
 ```typescript
 addPortfolioItems(items); // Line 76, 111, 146, 180
 // NO selection UI shown after this!
@@ -124,6 +129,7 @@ Display logic:
 | Elegant theme   | 933-1093 | Still only renders repos                       |
 
 **The Gap:**
+
 ```typescript
 // Line 72-75: Only GitHub repos loaded
 const { data, isLoading, error } = useQuery<{ repositories: Repository[] }>({

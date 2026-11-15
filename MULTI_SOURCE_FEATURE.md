@@ -109,6 +109,7 @@ type PortfolioItem =
 ```
 
 Each source type has its own schema with common fields:
+
 - id, title/name, description, url
 - summary (AI-generated)
 - selected (for portfolio inclusion)
@@ -302,6 +303,7 @@ if (no portfolio items && has repositories) {
 ### Environment Variables
 
 No new environment variables required. Existing variables still used:
+
 - `GITHUB_CLIENT_ID`
 - `GITHUB_CLIENT_SECRET`
 - `OPENAI_API_KEY`
@@ -309,6 +311,7 @@ No new environment variables required. Existing variables still used:
 ### User Credentials
 
 Users provide their own:
+
 - GitLab Personal Access Tokens
 - Bitbucket App Passwords
 - RSS feed URLs (public)

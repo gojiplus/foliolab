@@ -14,7 +14,6 @@ Use the [FolioLab GitHub Action](README-action.md) to build an organization webs
 
 [![Watch the video](https://i.ytimg.com/vi/xvnSaZuMXu8/hqdefault.jpg)](https://youtu.be/xvnSaZuMXu8)
 
-
 ## Features
 
 - Turn your GitHub repositories into a beautiful portfolio in minutes
@@ -55,6 +54,7 @@ cp .env.example .env
 ```
 
 Then edit `.env` with your actual values:
+
 ```env
 # GitHub OAuth Configuration
 VITE_GITHUB_CLIENT_ID=your_github_client_id
@@ -74,6 +74,7 @@ OPENAI_API_MODEL=gpt-4o
 **⚠️ Security Note**: Never commit your `.env` file to version control. The `.env` file is already included in `.gitignore`.
 
 To obtain GitHub OAuth credentials:
+
 1. Go to GitHub Settings > Developer Settings > OAuth Apps
 2. Create a new OAuth App
 3. Set the Homepage URL to `http://localhost:5000`
@@ -142,6 +143,7 @@ docker-compose up -d
 The application will be available at `http://localhost:5000`
 
 To stop the container:
+
 ```bash
 docker-compose down
 ```

@@ -20,6 +20,7 @@ This is a comprehensive analysis of how FolioLab handles selection and storage o
 **Comprehensive technical deep dive**
 
 Covers:
+
 - GitHub repository flow (complete implementation)
 - Blog/RSS post flow (incomplete - gap analysis)
 - Data storage architecture
@@ -36,6 +37,7 @@ Covers:
 **Visual representations of the flows**
 
 Contains:
+
 - GitHub selection flow (ASCII diagram)
 - Blog/RSS post flow showing where it breaks (ASCII diagram)
 - Storage architecture visualization
@@ -50,6 +52,7 @@ Contains:
 **Quick navigation guide to the codebase**
 
 Contains:
+
 - File structure overview
 - Key files and their responsibilities with line numbers
 - Data flow code examples
@@ -76,6 +79,7 @@ DISPLAY LAYER   ✓------  Only GitHub works
 ### What Works
 
 User can:
+
 1. Connect GitHub
 2. Go to `/repos`
 3. See repositories and select them with checkboxes
@@ -88,6 +92,7 @@ User can:
 ### What's Broken
 
 User can:
+
 1. Go to `/data-sources`
 2. Import blog posts, Medium articles, GitLab projects, etc.
 3. Get success message
@@ -191,6 +196,7 @@ Read EXECUTIVE_SUMMARY.md sections "The Fix Strategy", then use code_locations_r
 ### Selection State Exists for All Sources
 
 Every portfolio item type has a `selected: boolean` field in the schema:
+
 - GitHub Repository: `selected: boolean` (line 24 of schema.ts)
 - Blog Post: `selected: boolean` (line 98)
 - Medium Post: `selected: boolean` (line 113)
@@ -201,6 +207,7 @@ Every portfolio item type has a `selected: boolean` field in the schema:
 ### Storage is Unified
 
 Both legacy and new storage structures exist:
+
 - Legacy: `foliolab_repositories` (GitHub only)
 - New: `foliolab_portfolio_items` (all sources)
 
@@ -225,11 +232,13 @@ addPortfolioItems(items); // Add multiple items
 **The application is 70% done with multi-source portfolios:**
 
 ✓ 100% done:
+
 - Fetching blog posts, Medium articles, GitLab/Bitbucket repos
 - Storing them in localStorage
 - Creating appropriate schema for each type
 
 ✗ 0% done:
+
 - UI for users to select which items to include
 - Displaying selected items in portfolio preview
 - Navigation workflow connecting the pieces
